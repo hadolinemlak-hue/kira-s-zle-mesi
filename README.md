@@ -1,1 +1,0 @@
-# kira-s-zle-mesi
