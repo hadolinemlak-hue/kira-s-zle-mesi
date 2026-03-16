@@ -1,1 +1,763 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kira Sözleşmesi</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
 
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: #1a1a2e;
+  min-height: 100vh;
+  padding: 30px 16px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.header h1 {
+  font-size: 30px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.header h1 span {
+  color: #c9a84c;
+}
+
+.header p {
+  color: rgba(255,255,255,0.4);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: #faf8f3;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0,0,0,0.5);
+}
+
+.card-top {
+  background: #1a1a2e;
+  padding: 20px 28px;
+  border-bottom: 2px solid #c9a84c;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.card-top .icon {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg,#c9a84c,#e8c96a);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.card-top h2 {
+  color: #fff;
+  font-size: 17px;
+}
+
+.card-top p {
+  color: rgba(255,255,255,0.45);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.form-body {
+  padding: 28px;
+}
+
+.note {
+  background: #fef9ea;
+  border: 1px solid #e8d5a3;
+  border-radius: 7px;
+  padding: 11px 15px;
+  font-size: 12px;
+  color: #6b6456;
+  margin-bottom: 22px;
+  line-height: 1.6;
+}
+
+.note strong {
+  color: #8b3a2a;
+}
+
+.sec-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #c9a84c;
+  margin-bottom: 14px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid #d4c9b0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.sec-title::before {
+  content:'';
+  width:3px;
+  height:13px;
+  background:#c9a84c;
+  border-radius:2px;
+}
+
+.sec-group {
+  margin-bottom: 26px;
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+
+.g2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.g3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.span2 {
+  grid-column: span 2;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: #6b6456;
+}
+
+input, textarea, select {
+  padding: 9px 12px;
+  border: 1.5px solid #d4c9b0;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #1a1a2e;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #c9a84c;
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.13);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+.divider {
+  height: 1px;
+  background: #d4c9b0;
+  margin: 22px 0;
+}
+
+.btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg,#c9a84c,#e8c96a);
+  border: none;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1a1a2e;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 18px rgba(201,168,76,0.35);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(201,168,76,0.5);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(26,26,46,0.25);
+  border-top-color: #1a1a2e;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.toast {
+  display: none;
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-60px);
+  color: #fff;
+  padding: 11px 22px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+  z-index: 9999;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.toast.show {
+  display: block;
+  transform: translateX(-50%) translateY(0);
+}
+
+.toast.ok {
+  background: #2d6a4f;
+}
+
+.toast.err {
+  background: #8b3a2a;
+}
+
+@media(max-width:560px){
+  .g2,.g3 { grid-template-columns: 1fr; }
+  .span2 { grid-column: span 1; }
+  .form-body { padding: 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Kira <span>Sözleşmesi</span></h1>
+  <p>Bilgileri doldurun — PDF çıktısı oluşturulur</p>
+</div>
+
+<div class="card">
+  <div class="card-top">
+    <div class="icon">🏠</div>
+    <div>
+      <h2>Sözleşme Formu</h2>
+      <p>Tüm alanları eksiksiz doldurunuz</p>
+    </div>
+  </div>
+
+  <div class="form-body">
+    <div class="note">
+      <strong>📌 Not:</strong> Genel koşullar 2. sayfadan başlar. Ekstra madde alanı boş bırakılırsa eklenmez.
+    </div>
+
+    <div class="sec-group">
+      <div class="sec-title">Mülk Bilgileri</div>
+      <div class="grid g2">
+        <div class="field"><label>Kiralananın Cinsi</label><input id="cins" placeholder="ör. Daire, Dükkan, Ofis"></div>
+        <div class="field"><label>Kullanım Amacı</label><input id="kullanim" placeholder="ör. Mesken, Ticari amaç"></div>
+        <div class="field"><label>Mahallesi</label><input id="mahallesi" placeholder="Mahalle adı"></div>
+        <div class="field"><label>İlçe / İl</label><input id="dairesi" placeholder="ör. Çerkezköy / Tekirdağ"></div>
+        <div class="field span2"><label>Sokağı ve Numarası</label><input id="sokak" placeholder="Sokak adı ve kapı numarası"></div>
+        <div class="field">
+          <label>Daire Boyalı ve Temiz Verildi</label>
+          <select id="durum">
+            <option value="Hayır">Hayır</option>
+            <option value="Evet">Evet</option>
+          </select>
+        </div>
+        <div class="field"></div>
+        <div class="field span2"><label>Demirbaş Listesi</label><textarea id="demirbas" placeholder="Teslim edilen eşyalar..."></textarea></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec-group">
+      <div class="sec-title">Kiraya Veren (Mal Sahibi)</div>
+      <div class="grid g2">
+        <div class="field"><label>Adı Soyadı</label><input id="veren_ad" placeholder="Ad Soyad"></div>
+        <div class="field"><label>T.C. Kimlik No</label><input id="veren_tc" placeholder="00000000000" maxlength="11"></div>
+        <div class="field span2"><label>Banka Hesap No (IBAN)</label><input id="banka" placeholder="TR00 0000 0000 0000 0000 0000 00"></div>
+        <div class="field"><label>Cep Telefonu</label><input id="veren_tel" placeholder="05XX XXX XX XX"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec-group">
+      <div class="sec-title">Kiracı Bilgileri</div>
+      <div class="grid g2">
+        <div class="field"><label>Adı Soyadı</label><input id="kiraci_ad" placeholder="Ad Soyad"></div>
+        <div class="field"><label>T.C. Kimlik No</label><input id="kiraci_tc" placeholder="00000000000" maxlength="11"></div>
+        <div class="field"><label>Telefon</label><input id="kiraci_tel" placeholder="05XX XXX XX XX"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec-group">
+      <div class="sec-title">Kira Bilgileri</div>
+      <div class="grid g3">
+        <div class="field"><label>Aylık Kira (TL)</label><input type="number" id="aylik_kira" placeholder="0"></div>
+        <div class="field"><label>Peşinat (TL)</label><input type="number" id="pesinat" placeholder="0"></div>
+        <div class="field"><label>Depozito (TL)</label><input type="number" id="depozito" placeholder="0"></div>
+        <div class="field"><label>Başlangıç Tarihi</label><input type="date" id="baslangic"></div>
+        <div class="field"><label>Kira Müddeti</label><input id="muddet" placeholder="ör. 1 Yıl"></div>
+        <div class="field"><label>Ödeme Şekli</label><input id="odeme" placeholder="ör. Banka, Nakit"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec-group">
+      <div class="sec-title">Ekstra Koşul / Madde (Opsiyonel)</div>
+      <div class="grid g2">
+        <div class="field span2">
+          <label>Ekstra Madde Metni</label>
+          <textarea id="ek_madde" placeholder="ör. Kiracı apartman ortak alanlarını temiz kullanmayı kabul eder."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec-group">
+      <div class="sec-title">Kefil Bilgisi (Opsiyonel)</div>
+      <div class="grid g2">
+        <div class="field"><label>Kefil Adı Soyadı</label><input id="kefil_ad" placeholder="Ad Soyad (isteğe bağlı)"></div>
+        <div class="field"><label>Kefil T.C. Kimlik No</label><input id="kefil_tc" placeholder="00000000000" maxlength="11"></div>
+      </div>
+    </div>
+
+    <button class="btn" id="genBtn" onclick="generate()">
+      <span id="btnIcon">⬇</span>
+      <span id="btnText">PDF Oluştur ve İndir</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function g(id){
+  return document.getElementById(id).value.trim();
+}
+
+function escapeHTML(str=''){
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function nl2br(str=''){
+  return escapeHTML(str).replace(/\n/g, '<br>');
+}
+
+function fmtDate(ds){
+  if(!ds) return '..........';
+  const parts = ds.split('-');
+  if(parts.length !== 3) return '..........';
+  return parts[2] + '.' + parts[1] + '.' + parts[0];
+}
+
+function fmtMoney(v){
+  if(v === '' || v === null || v === undefined) return '..........';
+  const n = Number(v);
+  if(isNaN(n)) return '..........';
+  return n.toLocaleString('tr-TR') + ' TL';
+}
+
+function toast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => {
+    t.className = 'toast';
+  }, 4000);
+}
+
+function setBusy(busy){
+  const btn = document.getElementById('genBtn');
+  btn.disabled = busy;
+  document.getElementById('spinner').style.display = busy ? 'block' : 'none';
+  document.getElementById('btnIcon').style.display = busy ? 'none' : 'inline';
+  document.getElementById('btnText').textContent = busy ? 'Oluşturuluyor...' : 'PDF Oluştur ve İndir';
+}
+
+const KOSULLAR = [
+  "Kiracı, kat mülkiyeti kanununa uymayı aynen kabul ve taahhüt eder.",
+  "Kiracı, dükkan çevresinde oturanlara iyi niyet kuralları içinde davranacaktır.",
+  "Kiracı, dükkanı kısmen veya tamamen bir başkasına kiraya veremez, devir edemez.",
+  "Elektrik, su, doğalgaz, güvenlik, apartman veya siteye ait tüm aidatlar kiracıya aittir.",
+  "Kiracı apartman veya site yönetiminin alacağı kararlara aynen uymak zorundadır.",
+  "Kiracı, dükkanda yapılması gereken tadilat ve ilaveleri mal sahibine bildirmek zorundadır.",
+  "Kiracı mal sahibine vermiş olduğu peşinat ve depozitoyu yapacağı tamirata mahsup edemez.",
+  "Kiralanan dükkanın mülkiyet hakkından doğan vergiler ev sahibine aittir.",
+  "Kiracı, kira sözleşmesinin sonunda dükkanı teslim aldığı şekilde mülk sahibine teslim etmek zorundadır.",
+  "Kiracı, kira sözleşmesinin sona ermesi veya satılığa sunulması halinde dükkanın gezilmesine izin vermek zorundadır.",
+  "Kiracı, kiralanan yere yaptığı kalıcı ilaveler ve lüks görülen işlemlerin bedelini ev sahibinden isteyemez, kiradan kesemez.",
+  "Kiralanan dükkanın boşaltılması gerektiği hallerde, boşaltılmaması nedeniyle ortaya çıkacak zararlardan dolayı kiracı sorumludur.",
+  "Kiracı, mülk sahibinin yazılı imzalı olurunu almak ve giderleri kendisine ait olmak üzere kablolu televizyon gibi donanımları yaptırabilir.",
+  "Kiracı kiralananı boşaltmak istediği takdirde en az 15 gün evvelinden mal sahibine bildirmeyi taahhüt eder.",
+  "İş bu kontrat 1 yıllıktır. Kontratın sona ermesinden 15 gün evvel taraflar yazılı veya sözlü olarak ihtarda bulunmadıkları sürece kontrat yenilenmiş kabul edilir.",
+  "Taraflarca kira sözleşmesinde yazılı adresler kanuni ikametgâh adresi olarak kabul edilir.",
+  "Yıllık zam oranı TÜFE/ÜFE oranında artırılmayı taraflar kabul ve taahhüt eder."
+];
+
+function numberize(items){
+  return items.map((item, i) => `${i + 1}- ${item}`);
+}
+
+function buildHTML(d){
+  const sonMaddeler = [];
+
+  if (d.durum === 'Evet') {
+    sonMaddeler.push("Daire boyalı ve temiz verilmiştir. Verildiği şekilde teslim alınacaktır.");
+  }
+
+  if (d.ek_madde !== '..........') {
+    sonMaddeler.push(d.ek_madde);
+  }
+
+  sonMaddeler.push(`Kiracı peşinat olarak mal sahibine <strong>${escapeHTML(d.pesinat)}</strong> vermiştir.`);
+  sonMaddeler.push(`Kiracı depozito olarak mal sahibine <strong>${escapeHTML(d.depozito)}</strong> vermiştir. Depozito son ayın kirasına sayılmaz.`);
+  sonMaddeler.push("İhtilaf halinde Türkiye Cumhuriyeti mahkemeleri ve icra daireleri yetkilidir.");
+
+  const tumMaddeler = [
+    ...KOSULLAR,
+    ...sonMaddeler
+  ];
+
+  const kosullarHTML = numberize(tumMaddeler)
+    .map(m => `<p class="madde">${m}</p>`)
+    .join('');
+
+  const kefilVar = d.kefil_ad !== '..........' || d.kefil_tc !== '..........';
+
+  return `<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Kira Sözleşmesi</title>
+<style>
+  @page { size: A4; margin: 14mm 12mm; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    color: #111;
+    background:#fff;
+  }
+  .header-block {
+    background: #1a1a2e;
+    color: #fff;
+    text-align:center;
+    padding: 16px 10px 12px;
+    border-bottom: 3px solid #c9a84c;
+    margin-bottom: 10px;
+  }
+  .header-block h1 {
+    font-size: 19pt;
+    letter-spacing: 2px;
+    color: #c9a84c;
+  }
+  .header-block p {
+    font-size: 9pt;
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
+  }
+  .section {
+    margin-bottom: 8px;
+  }
+  .sec-head {
+    background: #f5f0e8;
+    font-size: 9pt;
+    font-weight: bold;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #c9a84c;
+    padding: 6px 8px;
+    border-left: 3px solid #c9a84c;
+    margin-bottom: 5px;
+  }
+  table.info {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  table.info td {
+    padding: 5px 8px;
+    font-size: 10.5pt;
+    border-bottom: 1px solid #ede8db;
+    vertical-align: top;
+  }
+  table.info td:first-child {
+    width: 40%;
+    font-weight: bold;
+    color: #555;
+    font-size: 9.5pt;
+  }
+  .page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+  .madde {
+    font-size: 9.5pt;
+    line-height: 1.5;
+    padding: 4px 0;
+    color: #222;
+    border-bottom: 1px dotted #e0d8cc;
+  }
+  .nusha {
+    font-size: 8.5pt;
+    font-style: italic;
+    color: #666;
+    margin-top: 8px;
+    text-align: center;
+  }
+  .sig-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+  .sig-table td {
+    width: 33.3%;
+    text-align: center;
+    padding: 12px 8px;
+    vertical-align: top;
+    border: 1px solid #d4c9b0;
+    background: #faf8f3;
+  }
+  .sig-title {
+    font-weight: bold;
+    font-size: 9.5pt;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+  }
+  .sig-info {
+    font-size: 8.5pt;
+    color: #555;
+    margin-bottom: 2px;
+    word-break: break-word;
+  }
+  .sig-line {
+    border-top: 1px solid #888;
+    margin-top: 24px;
+    padding-top: 4px;
+    font-size: 7.5pt;
+    color: #999;
+  }
+  .vergi {
+    background: #fff8e8;
+    border: 1px solid #e8d5a3;
+    border-radius:4px;
+    padding: 8px 10px;
+    margin-top: 12px;
+    font-size: 8.5pt;
+    color: #5a4a2a;
+    line-height:1.5;
+  }
+  .vergi strong { color: #8b3a2a; }
+  @media print {
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-block">
+  <h1>KİRA SÖZLEŞMESİ</h1>
+  <p>Resmi Kira Sözleşmesi Belgesi</p>
+</div>
+
+<div class="section">
+  <div class="sec-head">Kiralanan Mülk Bilgileri</div>
+  <table class="info">
+    <tr><td>Kiralananın Cinsi</td><td>${escapeHTML(d.cins)}</td></tr>
+    <tr><td>Kullanım Amacı</td><td>${escapeHTML(d.kullanim)}</td></tr>
+    <tr><td>Mahallesi</td><td>${escapeHTML(d.mahallesi)}</td></tr>
+    <tr><td>Sokağı ve Numarası</td><td>${escapeHTML(d.sokak)}</td></tr>
+    <tr><td>İlçe / İl</td><td>${escapeHTML(d.dairesi)}</td></tr>
+    <tr><td>Daire Boyalı ve Temiz Verildi</td><td>${escapeHTML(d.durum)}</td></tr>
+    <tr><td>Demirbaş Listesi</td><td>${nl2br(d.demirbas)}</td></tr>
+    <tr><td>Ekstra Madde</td><td>${nl2br(d.ek_madde)}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="sec-head">Kiraya Veren (Mal Sahibi)</div>
+  <table class="info">
+    <tr><td>Adı Soyadı</td><td>${escapeHTML(d.veren_ad)}</td></tr>
+    <tr><td>T.C. Kimlik No</td><td>${escapeHTML(d.veren_tc)}</td></tr>
+    <tr><td>Banka Hesap No</td><td>${escapeHTML(d.banka)}</td></tr>
+    <tr><td>Cep Telefonu</td><td>${escapeHTML(d.veren_tel)}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="sec-head">Kiracı Bilgileri</div>
+  <table class="info">
+    <tr><td>Adı Soyadı</td><td>${escapeHTML(d.kiraci_ad)}</td></tr>
+    <tr><td>T.C. Kimlik No</td><td>${escapeHTML(d.kiraci_tc)}</td></tr>
+    <tr><td>Telefon</td><td>${escapeHTML(d.kiraci_tel)}</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="sec-head">Kira Koşulları</div>
+  <table class="info">
+    <tr><td>Bir Aylık Kira Karşılığı</td><td>${escapeHTML(d.aylik_kira)}</td></tr>
+    <tr><td>Bir Senelik Kira Karşılığı</td><td>${escapeHTML(d.yillik_kira)}</td></tr>
+    <tr><td>Kira Müddeti</td><td>${escapeHTML(d.muddet)}</td></tr>
+    <tr><td>Kiranın Başlangıç Tarihi</td><td>${escapeHTML(d.baslangic)}</td></tr>
+    <tr><td>Kira Ne Şekilde Ödenecek</td><td>${escapeHTML(d.odeme)}</td></tr>
+  </table>
+</div>
+
+<div class="section page-break">
+  <div class="sec-head">Genel Koşullar</div>
+  ${kosullarHTML}
+  <p class="nusha">İş bu kontrat maddelerden ibaret olup 2 nüsha düzenlenip muhatapların her birine verilmiştir.</p>
+</div>
+
+<table class="sig-table">
+  <tr>
+    <td>
+      <div class="sig-title">KEFİL</div>
+      <div class="sig-info">${kefilVar ? escapeHTML(d.kefil_ad) : 'Yok'}</div>
+      <div class="sig-info">${kefilVar ? 'TC: ' + escapeHTML(d.kefil_tc) : ''}</div>
+      <div class="sig-line">İmza</div>
+    </td>
+    <td>
+      <div class="sig-title">KİRACI</div>
+      <div class="sig-info">${escapeHTML(d.kiraci_ad)}</div>
+      <div class="sig-info">TC: ${escapeHTML(d.kiraci_tc)}</div>
+      <div class="sig-info">Tel: ${escapeHTML(d.kiraci_tel)}</div>
+      <div class="sig-line">İmza</div>
+    </td>
+    <td>
+      <div class="sig-title">KİRAYA VEREN</div>
+      <div class="sig-info">${escapeHTML(d.veren_ad)}</div>
+      <div class="sig-info">TC: ${escapeHTML(d.veren_tc)}</div>
+      <div class="sig-info">Tel: ${escapeHTML(d.veren_tel)}</div>
+      <div class="sig-line">İmza</div>
+    </td>
+  </tr>
+</table>
+
+<div class="vergi">
+  <strong>Gelir Vergisi Kanununa Göre:</strong>
+  Tüccar, serbest meslek erbabı ve çiftçiler; ticari, mesleki ve zirai işleri ile ilgili olarak yaptıkları kira ödemelerinden kanunda belirtilen oranlarda stopaj tevkifatı yaparak vergi dairesine yatırırlar.
+</div>
+
+</body>
+</html>`;
+}
+
+function generate(){
+  setBusy(true);
+
+  try {
+    const aylik = g('aylik_kira');
+
+    const d = {
+      dairesi: g('dairesi') || '..........',
+      mahallesi: g('mahallesi') || '..........',
+      sokak: g('sokak') || '..........',
+      cins: g('cins') || '..........',
+      durum: g('durum') || 'Hayır',
+      kullanim: g('kullanim') || '..........',
+      demirbas: g('demirbas') || '..........',
+      ek_madde: g('ek_madde') || '..........',
+
+      veren_ad: g('veren_ad') || '..........',
+      veren_tc: g('veren_tc') || '..........',
+      banka: g('banka') || '..........',
+      veren_tel: g('veren_tel') || '..........',
+
+      kiraci_ad: g('kiraci_ad') || '..........',
+      kiraci_tc: g('kiraci_tc') || '..........',
+      kiraci_tel: g('kiraci_tel') || '..........',
+
+      aylik_kira: aylik ? fmtMoney(aylik) : '..........',
+      yillik_kira: aylik ? fmtMoney(Number(aylik) * 12) : '..........',
+      pesinat: g('pesinat') ? fmtMoney(g('pesinat')) : '..........',
+      depozito: g('depozito') ? fmtMoney(g('depozito')) : '..........',
+
+      muddet: g('muddet') || '..........',
+      baslangic: fmtDate(g('baslangic')),
+      odeme: g('odeme') || '..........',
+
+      kefil_ad: g('kefil_ad') || '..........',
+      kefil_tc: g('kefil_tc') || '..........'
+    };
+
+    const html = buildHTML(d);
+    const win = window.open('', '_blank');
+
+    if (!win) {
+      toast('❌ Pop-up engellendi. Tarayıcıda pop-up izni ver.', 'err');
+      setBusy(false);
+      return;
+    }
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+
+    win.onload = function(){
+      setTimeout(function(){
+        win.focus();
+        win.print();
+        setBusy(false);
+      }, 500);
+    };
+
+    toast('✅ Belge açıldı. Yazdır ekranında "PDF olarak kaydet" seç.', 'ok');
+
+  } catch(e) {
+    console.error(e);
+    toast('❌ Hata: ' + e.message, 'err');
+    setBusy(false);
+  }
+}
+</script>
+
+</body>
+</html>
