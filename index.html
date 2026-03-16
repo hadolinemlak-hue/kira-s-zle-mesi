@@ -11,12 +11,12 @@ body {
   font-family: 'Segoe UI', Tahoma, sans-serif;
   background: #1a1a2e;
   min-height: 100vh;
-  padding: 20px 12px;
+  padding: 30px 16px;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .header h1 {
@@ -30,13 +30,13 @@ body {
 }
 
 .header p {
-  color: rgba(255,255,255,0.45);
+  color: rgba(255,255,255,0.4);
   font-size: 13px;
   margin-top: 6px;
 }
 
 .card {
-  max-width: 860px;
+  max-width: 720px;
   margin: 0 auto;
   background: #faf8f3;
   border-radius: 14px;
@@ -76,7 +76,7 @@ body {
 }
 
 .form-body {
-  padding: 26px;
+  padding: 28px;
 }
 
 .note {
@@ -117,7 +117,7 @@ body {
 }
 
 .sec-group {
-  margin-bottom: 24px;
+  margin-bottom: 26px;
 }
 
 .grid {
@@ -152,7 +152,7 @@ label {
 }
 
 input, textarea, select {
-  padding: 10px 12px;
+  padding: 9px 12px;
   border: 1.5px solid #d4c9b0;
   border-radius: 7px;
   font-family: inherit;
@@ -170,13 +170,13 @@ input:focus, textarea:focus, select:focus {
 
 textarea {
   resize: vertical;
-  min-height: 70px;
+  min-height: 64px;
 }
 
 .divider {
   height: 1px;
   background: #d4c9b0;
-  margin: 20px 0;
+  margin: 22px 0;
 }
 
 .btn {
@@ -244,16 +244,18 @@ textarea {
   transform: translateX(-50%) translateY(0);
 }
 
-.toast.ok { background: #2d6a4f; }
-.toast.err { background: #8b3a2a; }
+.toast.ok {
+  background: #2d6a4f;
+}
+
+.toast.err {
+  background: #8b3a2a;
+}
 
 @media(max-width:560px){
-  body { padding: 10px 8px; }
   .g2,.g3 { grid-template-columns: 1fr; }
   .span2 { grid-column: span 1; }
-  .form-body { padding: 16px; }
-  .card { border-radius: 10px; }
-  .header h1 { font-size: 26px; }
+  .form-body { padding: 18px; }
 }
 </style>
 </head>
@@ -275,7 +277,7 @@ textarea {
 
   <div class="form-body">
     <div class="note">
-      <strong>📌 Not:</strong> Genel koşullar 2. sayfadan başlar. Koşula bağlı maddeler ve ekstra madde sona otomatik numarayla eklenir.
+      <strong>📌 Not:</strong> Genel koşullar 2. sayfadan başlar. Ekstra madde alanı boş bırakılırsa eklenmez.
     </div>
 
     <div class="sec-group">
@@ -448,7 +450,7 @@ function buildHTML(d){
   }
 
   if (d.ek_madde !== '..........') {
-    sonMaddeler.push(escapeHTML(d.ek_madde));
+    sonMaddeler.push(d.ek_madde);
   }
 
   sonMaddeler.push(`Kiracı peşinat olarak mal sahibine <strong>${escapeHTML(d.pesinat)}</strong> vermiştir.`);
@@ -470,205 +472,126 @@ function buildHTML(d){
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kira Sözleşmesi</title>
 <style>
-  @page {
-    size: A4;
-    margin: 10mm 8mm;
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  html, body {
-    width: 100%;
-    max-width: 100%;
-    background: #e9e9e9;
-  }
-
+  @page { size: A4; margin: 14mm 12mm; }
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 9.4pt;
-    line-height: 1.28;
+    font-size: 11pt;
     color: #111;
-    padding: 0;
+    background:#fff;
   }
-
-  /* Ekranda büyük göster */
-  .page {
-    width: 100%;
-    max-width: 100vw;
-    margin: 0 auto;
-    background: #fff;
-    padding: 10px 8px;
-  }
-
   .header-block {
     background: #1a1a2e;
     color: #fff;
-    text-align: center;
-    padding: 10px 8px 8px;
-    border-bottom: 2px solid #c9a84c;
-    margin-bottom: 6px;
+    text-align:center;
+    padding: 16px 10px 12px;
+    border-bottom: 3px solid #c9a84c;
+    margin-bottom: 10px;
   }
-
   .header-block h1 {
-    font-size: 15pt;
-    letter-spacing: 1px;
+    font-size: 19pt;
+    letter-spacing: 2px;
     color: #c9a84c;
   }
-
   .header-block p {
-    font-size: 7.5pt;
-    color: rgba(255,255,255,0.75);
-    margin-top: 3px;
+    font-size: 9pt;
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
   }
-
   .section {
-    margin-bottom: 5px;
+    margin-bottom: 8px;
   }
-
   .sec-head {
     background: #f5f0e8;
-    font-size: 7.7pt;
+    font-size: 9pt;
     font-weight: bold;
-    letter-spacing: 0.8px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     color: #c9a84c;
-    padding: 4px 6px;
-    border-left: 2px solid #c9a84c;
-    margin-bottom: 3px;
+    padding: 6px 8px;
+    border-left: 3px solid #c9a84c;
+    margin-bottom: 5px;
   }
-
   table.info {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed;
   }
-
   table.info td {
-    padding: 3px 5px;
-    font-size: 8.5pt;
+    padding: 5px 8px;
+    font-size: 10.5pt;
     border-bottom: 1px solid #ede8db;
     vertical-align: top;
-    word-break: break-word;
   }
-
   table.info td:first-child {
-    width: 36%;
+    width: 40%;
     font-weight: bold;
     color: #555;
-    font-size: 7.8pt;
+    font-size: 9.5pt;
   }
-
   .page-break {
-    break-before: page;
     page-break-before: always;
+    break-before: page;
   }
-
   .madde {
-    font-size: 8.2pt;
-    line-height: 1.32;
-    padding: 2px 0;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    padding: 4px 0;
     color: #222;
     border-bottom: 1px dotted #e0d8cc;
-    word-break: break-word;
   }
-
   .nusha {
-    font-size: 7.4pt;
+    font-size: 8.5pt;
     font-style: italic;
     color: #666;
-    margin-top: 6px;
+    margin-top: 8px;
     text-align: center;
   }
-
   .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 8px;
-    table-layout: fixed;
+    margin-top: 12px;
   }
-
   .sig-table td {
-    width: 33.33%;
+    width: 33.3%;
     text-align: center;
-    padding: 8px 5px;
+    padding: 12px 8px;
     vertical-align: top;
     border: 1px solid #d4c9b0;
     background: #faf8f3;
-    word-break: break-word;
   }
-
   .sig-title {
     font-weight: bold;
-    font-size: 8pt;
+    font-size: 9.5pt;
     color: #1a1a2e;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
   }
-
   .sig-info {
-    font-size: 7.2pt;
+    font-size: 8.5pt;
     color: #555;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
     word-break: break-word;
   }
-
   .sig-line {
     border-top: 1px solid #888;
-    margin-top: 16px;
-    padding-top: 3px;
-    font-size: 6.8pt;
+    margin-top: 24px;
+    padding-top: 4px;
+    font-size: 7.5pt;
     color: #999;
   }
-
   .vergi {
     background: #fff8e8;
     border: 1px solid #e8d5a3;
-    border-radius: 3px;
-    padding: 6px 7px;
-    margin-top: 8px;
-    font-size: 7.2pt;
+    border-radius:4px;
+    padding: 8px 10px;
+    margin-top: 12px;
+    font-size: 8.5pt;
     color: #5a4a2a;
-    line-height: 1.3;
+    line-height:1.5;
   }
-
-  .vergi strong {
-    color: #8b3a2a;
-  }
-
-  @media screen {
-    html, body {
-      width: 100%;
-      overflow-x: hidden;
-    }
-
-    .page {
-      width: 100vw;
-      max-width: 100vw;
-      min-height: 100vh;
-      padding: 12px 10px;
-    }
-  }
-
+  .vergi strong { color: #8b3a2a; }
   @media print {
-    html, body {
-      width: 210mm;
-      max-width: 210mm;
-      background: #fff;
-    }
-
-    .page {
-      width: auto;
-      max-width: none;
-      min-height: auto;
-      padding: 0;
-    }
-
     body {
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -677,7 +600,6 @@ function buildHTML(d){
 </style>
 </head>
 <body>
-<div class="page">
 
 <div class="header-block">
   <h1>KİRA SÖZLEŞMESİ</h1>
@@ -764,7 +686,6 @@ function buildHTML(d){
   Tüccar, serbest meslek erbabı ve çiftçiler; ticari, mesleki ve zirai işleri ile ilgili olarak yaptıkları kira ödemelerinden kanunda belirtilen oranlarda stopaj tevkifatı yaparak vergi dairesine yatırırlar.
 </div>
 
-</div>
 </body>
 </html>`;
 }
@@ -823,11 +744,12 @@ function generate(){
     win.onload = function(){
       setTimeout(function(){
         win.focus();
+        win.print();
         setBusy(false);
-      }, 300);
+      }, 500);
     };
 
-    toast('✅ Belge açıldı. Mobilde ekrana tam oturur, sonra paylaş/yazdır ile PDF al.', 'ok');
+    toast('✅ Belge açıldı. Yazdır ekranında "PDF olarak kaydet" seç.', 'ok');
 
   } catch(e) {
     console.error(e);
