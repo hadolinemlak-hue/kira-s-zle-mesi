@@ -277,7 +277,7 @@ textarea {
 
   <div class="form-body">
     <div class="note">
-      <strong>📌 Not:</strong> Genel koşullar 2. sayfadan başlar. Ekstra madde alanı boş bırakılırsa eklenmez.
+      <strong>📌 Not:</strong> Genel koşullar 2. sayfadan başlar. Koşula bağlı maddeler ve ekstra madde sona otomatik numarayla eklenir.
     </div>
 
     <div class="sec-group">
@@ -450,7 +450,7 @@ function buildHTML(d){
   }
 
   if (d.ek_madde !== '..........') {
-    sonMaddeler.push(d.ek_madde);
+    sonMaddeler.push(escapeHTML(d.ek_madde));
   }
 
   sonMaddeler.push(`Kiracı peşinat olarak mal sahibine <strong>${escapeHTML(d.pesinat)}</strong> vermiştir.`);
@@ -474,124 +474,171 @@ function buildHTML(d){
 <meta charset="UTF-8">
 <title>Kira Sözleşmesi</title>
 <style>
-  @page { size: A4; margin: 14mm 12mm; }
-  * { margin:0; padding:0; box-sizing:border-box; }
+  @page {
+    size: A4;
+    margin: 10mm 8mm;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
   body {
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 11pt;
+    font-size: 9.4pt;
+    line-height: 1.28;
     color: #111;
-    background:#fff;
+    background: #fff;
   }
+
   .header-block {
     background: #1a1a2e;
     color: #fff;
-    text-align:center;
-    padding: 16px 10px 12px;
-    border-bottom: 3px solid #c9a84c;
-    margin-bottom: 10px;
+    text-align: center;
+    padding: 10px 8px 8px;
+    border-bottom: 2px solid #c9a84c;
+    margin-bottom: 6px;
   }
+
   .header-block h1 {
-    font-size: 19pt;
-    letter-spacing: 2px;
+    font-size: 15pt;
+    letter-spacing: 1px;
     color: #c9a84c;
   }
+
   .header-block p {
-    font-size: 9pt;
-    color: rgba(255,255,255,0.7);
-    margin-top: 4px;
+    font-size: 7.5pt;
+    color: rgba(255,255,255,0.75);
+    margin-top: 3px;
   }
+
   .section {
-    margin-bottom: 8px;
-  }
-  .sec-head {
-    background: #f5f0e8;
-    font-size: 9pt;
-    font-weight: bold;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-    color: #c9a84c;
-    padding: 6px 8px;
-    border-left: 3px solid #c9a84c;
     margin-bottom: 5px;
   }
+
+  .sec-head {
+    background: #f5f0e8;
+    font-size: 7.7pt;
+    font-weight: bold;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #c9a84c;
+    padding: 4px 6px;
+    border-left: 2px solid #c9a84c;
+    margin-bottom: 3px;
+  }
+
   table.info {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
   }
+
   table.info td {
-    padding: 5px 8px;
-    font-size: 10.5pt;
+    padding: 3px 5px;
+    font-size: 8.5pt;
     border-bottom: 1px solid #ede8db;
     vertical-align: top;
+    word-break: break-word;
   }
+
   table.info td:first-child {
-    width: 40%;
+    width: 36%;
     font-weight: bold;
     color: #555;
-    font-size: 9.5pt;
+    font-size: 7.8pt;
   }
+
   .page-break {
     page-break-before: always;
     break-before: page;
   }
+
   .madde {
-    font-size: 9.5pt;
-    line-height: 1.5;
-    padding: 4px 0;
+    font-size: 8.2pt;
+    line-height: 1.32;
+    padding: 2px 0;
     color: #222;
     border-bottom: 1px dotted #e0d8cc;
+    word-break: break-word;
   }
+
   .nusha {
-    font-size: 8.5pt;
+    font-size: 7.4pt;
     font-style: italic;
     color: #666;
-    margin-top: 8px;
+    margin-top: 6px;
     text-align: center;
   }
+
   .sig-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 12px;
+    margin-top: 8px;
+    table-layout: fixed;
   }
+
   .sig-table td {
-    width: 33.3%;
+    width: 33.33%;
     text-align: center;
-    padding: 12px 8px;
+    padding: 8px 5px;
     vertical-align: top;
     border: 1px solid #d4c9b0;
     background: #faf8f3;
-  }
-  .sig-title {
-    font-weight: bold;
-    font-size: 9.5pt;
-    color: #1a1a2e;
-    margin-bottom: 4px;
-  }
-  .sig-info {
-    font-size: 8.5pt;
-    color: #555;
-    margin-bottom: 2px;
     word-break: break-word;
   }
+
+  .sig-title {
+    font-weight: bold;
+    font-size: 8pt;
+    color: #1a1a2e;
+    margin-bottom: 3px;
+  }
+
+  .sig-info {
+    font-size: 7.2pt;
+    color: #555;
+    margin-bottom: 1px;
+    word-break: break-word;
+  }
+
   .sig-line {
     border-top: 1px solid #888;
-    margin-top: 24px;
-    padding-top: 4px;
-    font-size: 7.5pt;
+    margin-top: 16px;
+    padding-top: 3px;
+    font-size: 6.8pt;
     color: #999;
   }
+
   .vergi {
     background: #fff8e8;
     border: 1px solid #e8d5a3;
-    border-radius:4px;
-    padding: 8px 10px;
-    margin-top: 12px;
-    font-size: 8.5pt;
+    border-radius: 3px;
+    padding: 6px 7px;
+    margin-top: 8px;
+    font-size: 7.2pt;
     color: #5a4a2a;
-    line-height:1.5;
+    line-height: 1.3;
   }
-  .vergi strong { color: #8b3a2a; }
+
+  .vergi strong {
+    color: #8b3a2a;
+  }
+
   @media print {
+    html, body {
+      width: 210mm;
+      max-width: 210mm;
+    }
+
     body {
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
