@@ -323,7 +323,16 @@ textarea { resize: vertical; min-height: 64px; }
         <strong>📌 Not:</strong> Genel koşullar 2. sayfadan başlar. Ekstra madde alanı boş bırakılırsa eklenmez. <strong>Yıldızlı (*) alanlar zorunludur.</strong>
       </div>
 
+      <!-- EKSTRA KOŞUL — FORMUN ÖNÜNDE -->
+      <div class="ekstra-kosul-box">
+        <div class="sec-title">Ekstra Koşul / Madde (Opsiyonel)</div>
+        <div class="field">
+          <label>Ekstra Madde Metni</label>
+          <textarea id="ek_madde" placeholder="ör. Kiracı apartman ortak alanlarını temiz kullanmayı kabul eder."></textarea>
+        </div>
+      </div>
 
+      <div class="divider"></div>
 
       <!-- MÜLK BİLGİLERİ -->
       <div class="sec-group">
@@ -341,7 +350,7 @@ textarea { resize: vertical; min-height: 64px; }
 
       <!-- KİRAYA VEREN -->
       <div class="sec-group">
-        <div class="sec-title">Kiraya Veren Bilgileri (Mal Sahibi)</div>
+        <div class="sec-title">Kiraya Veren (Mal Sahibi)</div>
         <div class="grid g2">
           <div class="field"><label>Adı Soyadı *</label><input id="veren_ad" placeholder="Ad Soyad"></div>
           <div class="field"><label>T.C. Kimlik No</label><input id="veren_tc" placeholder="00000000000" maxlength="11" inputmode="numeric"></div>
@@ -374,17 +383,6 @@ textarea { resize: vertical; min-height: 64px; }
           <div class="field"><label>Ödeme Şekli</label><input id="odeme" placeholder="ör. Banka, Nakit"></div>
         </div>
       </div>
-      <div class="divider"></div>
-
-       <!-- EKSTRA KOŞUL — FORMUN ÖNÜNDE -->
-      <div class="Kira Ödeme Günü-box">
-        <div class="sec-title">Kira Ödeme Günü (Opsiyonel)</div>
-        <div class="field">
-          <label>Kira ödemeleri her ayın 1-5 i arasındadır.</label>
-          <textarea id="ek_madde" placeholder="ör. Kiracı apartman ortak alanlarını temiz kullanmayı kabul eder."></textarea>
-        </div>
-      </div>
-
       <div class="divider"></div>
 
       <!-- KEFİL -->
@@ -834,12 +832,12 @@ function buildData(raw){
 
 function buildHTML(d){
   const sonMaddeler=[];
-  if(d.ek_madde) sonMaddeler.push(d.ek_madde);
   sonMaddeler.push(`Kiracı peşinat olarak mal sahibine <strong>${escapeHTML(d.pesinat)}</strong> vermiştir.`);
   sonMaddeler.push(`Kiracı depozito olarak mal sahibine <strong>${escapeHTML(d.depozito)}</strong> vermiştir. Depozito son ayın kirasına sayılmaz.`);
   sonMaddeler.push('İhtilaf halinde Türkiye Cumhuriyeti mahkemeleri ve icra daireleri yetkilidir.');
   const tumMaddeler=[...getKosullar(),...sonMaddeler];
   const kosullarHTML=tumMaddeler.map((m,i)=>`<p class="madde">${i+1}- ${m}</p>`).join('');
+  const ekstraHTML=d.ek_madde?`<div class="section"><div class="sec-head">Ekstra Koşul</div><p style="font-size:10.5pt;padding:6px 8px;line-height:1.6;color:#222;">${escapeHTML(d.ek_madde)}</p></div>`:'';
   const kefilVar=d.kefil_ad!=='..........'||d.kefil_tc!=='..........';
   return `<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><title>Kira Sözleşmesi</title>
@@ -899,6 +897,7 @@ table.info td:first-child{width:40%;font-weight:bold;color:#555;font-size:9.5pt;
 <tr><td>Başlangıç Tarihi</td><td>${escapeHTML(d.baslangic)}</td></tr>
 <tr><td>Ödeme Şekli</td><td>${escapeHTML(d.odeme)}</td></tr>
 </table></div>
+${ekstraHTML}
 <div class="section page-break"><div class="sec-head">Genel Koşullar</div>
 ${kosullarHTML}
 <p class="nusha">İş bu kontrat maddelerden ibaret olup 2 nüsha düzenlenip muhatapların her birine verilmiştir.</p>
@@ -908,21 +907,17 @@ ${kosullarHTML}
   <div class="sig-title">KEFİL</div>
   <div class="sig-info">${kefilVar?escapeHTML(d.kefil_ad):'Yok'}</div>
   <div class="sig-info">${kefilVar?'TC: '+escapeHTML(d.kefil_tc):''}</div>
-  <div class="sig-line">İmza</div><div class="sig-date">Tarih: ....../....../............</div>
+  <div class="sig-line">İmza</div>
 </td>
 <td>
   <div class="sig-title">KİRACI</div>
-  <div class="sig-info">${escapeHTML(d.kiraci_ad)}</div>
-  <div class="sig-info">TC: ${escapeHTML(d.kiraci_tc)}</div>
-  <div class="sig-info">Tel: ${escapeHTML(d.kiraci_tel)}</div>
-  <div class="sig-line">İmza</div><div class="sig-date">Tarih: ....../....../............</div>
+  <div class="sig-info" style="font-size:11.5pt;font-weight:bold;color:#1a1a2e;">${escapeHTML(d.kiraci_ad)}</div>
+  <div class="sig-line">İmza</div>
 </td>
 <td>
   <div class="sig-title">KİRAYA VEREN</div>
-  <div class="sig-info">${escapeHTML(d.veren_ad)}</div>
-  <div class="sig-info">TC: ${escapeHTML(d.veren_tc)}</div>
-  <div class="sig-info">Tel: ${escapeHTML(d.veren_tel)}</div>
-  <div class="sig-line">İmza</div><div class="sig-date">Tarih: ....../....../............</div>
+  <div class="sig-info" style="font-size:11.5pt;font-weight:bold;color:#1a1a2e;">${escapeHTML(d.veren_ad)}</div>
+  <div class="sig-line">İmza</div>
 </td>
 </tr></table>
 <div class="vergi">
