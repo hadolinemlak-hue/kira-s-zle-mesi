@@ -325,7 +325,7 @@ textarea { resize: vertical; min-height: 64px; }
 
       <!-- EKSTRA KOŞUL — FORMUN ÖNÜNDE -->
       <div class="ekstra-kosul-box">
-        <div class="sec-title">ÖDEME GÜNÜ/ Madde (Opsiyonel)</div>
+        <div class="sec-title">Ekstra Koşul / Madde (Opsiyonel)</div>
         <div class="field">
           <label>Ekstra Madde Metni</label>
           <textarea id="ek_madde" placeholder="ör. Kiracı apartman ortak alanlarını temiz kullanmayı kabul eder."></textarea>
@@ -381,6 +381,7 @@ textarea { resize: vertical; min-height: 64px; }
           <div class="field"><label>Başlangıç Tarihi *</label><input type="date" id="baslangic"></div>
           <div class="field"><label>Kira Müddeti</label><input id="muddet" placeholder="ör. 1 Yıl"></div>
           <div class="field"><label>Ödeme Şekli</label><input id="odeme" placeholder="ör. Banka, Nakit"></div>
+          <div class="field"><label>Kira Ödeme Günü</label><input id="kira_gunu" placeholder="ör. Her ayın 1'i"></div>
         </div>
       </div>
       <div class="divider"></div>
@@ -480,7 +481,7 @@ const FIELD_IDS = [
   'cins','kullanim','mahallesi','dairesi','sokak','demirbas',
   'ek_madde','veren_ad','veren_tc','banka','veren_tel',
   'kiraci_ad','kiraci_tc','kiraci_tel',
-  'aylik_kira','pesinat','depozito','baslangic','muddet','odeme',
+  'aylik_kira','pesinat','depozito','baslangic','muddet','odeme','kira_gunu','kira_gunu',
   'kefil_ad','kefil_tc'
 ];
 
@@ -825,7 +826,8 @@ function buildData(raw){
     pesinat:   raw.pesinat  ?fmtMoney(raw.pesinat) :'...........',
     depozito:  raw.depozito ?fmtMoney(raw.depozito):'...........',
     muddet:    raw.muddet   ||'..........', baslangic:fmtDate(raw.baslangic),
-    odeme:     raw.odeme    ||'..........',
+    odeme:     raw.odeme    ||'..........', kira_gunu:raw.kira_gunu||'..........',
+    kira_gunu: raw.kira_gunu ||'..........',
     kefil_ad:  raw.kefil_ad ||'..........', kefil_tc:raw.kefil_tc||'..........'
   };
 }
@@ -837,7 +839,7 @@ function buildHTML(d){
   sonMaddeler.push('İhtilaf halinde Türkiye Cumhuriyeti mahkemeleri ve icra daireleri yetkilidir.');
   const tumMaddeler=[...getKosullar(),...sonMaddeler];
   const kosullarHTML=tumMaddeler.map((m,i)=>`<p class="madde">${i+1}- ${m}</p>`).join('');
-  const ekstraHTML=d.ek_madde?`<div class="section"><div class="sec-head">ÖDEME GÜNÜ</div><p style="font-size:10.5pt;padding:6px 8px;line-height:1.6;color:#222;">${escapeHTML(d.ek_madde)}</p></div>`:'';
+  const ekstraHTML=d.ek_madde?`<div class="section"><div class="sec-head">Ekstra Koşul</div><p style="font-size:10.5pt;padding:6px 8px;line-height:1.6;color:#222;">${escapeHTML(d.ek_madde)}</p></div>`:'';
   const kefilVar=d.kefil_ad!=='..........'||d.kefil_tc!=='..........';
   return `<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><title>Kira Sözleşmesi</title>
@@ -896,8 +898,14 @@ table.info td:first-child{width:40%;font-weight:bold;color:#555;font-size:9.5pt;
 <tr><td>Kira Müddeti</td><td>${escapeHTML(d.muddet)}</td></tr>
 <tr><td>Başlangıç Tarihi</td><td>${escapeHTML(d.baslangic)}</td></tr>
 <tr><td>Ödeme Şekli</td><td>${escapeHTML(d.odeme)}</td></tr>
+<tr><td>Kira Ödeme Günü</td><td>${escapeHTML(d.kira_gunu)}</td></tr>
 </table></div>
 ${ekstraHTML}
+<div class="vergi">
+  <strong>Gelir Vergisi Kanununa Göre:</strong>
+  Tüccar, serbest meslek erbabı ve çiftçiler; ticari, mesleki ve zirai işleri ile ilgili olarak
+  yaptıkları kira ödemelerinden kanunda belirtilen oranlarda stopaj tevkifatı yaparak vergi dairesine yatırırlar.
+</div>
 <div class="section page-break"><div class="sec-head">Genel Koşullar</div>
 ${kosullarHTML}
 <p class="nusha">İş bu kontrat maddelerden ibaret olup 2 nüsha düzenlenip muhatapların her birine verilmiştir.</p>
@@ -920,11 +928,6 @@ ${kosullarHTML}
   <div class="sig-line">İmza</div>
 </td>
 </tr></table>
-<div class="vergi">
-  <strong>Gelir Vergisi Kanununa Göre:</strong>
-  Tüccar, serbest meslek erbabı ve çiftçiler; ticari, mesleki ve zirai işleri ile ilgili olarak
-  yaptıkları kira ödemelerinden kanunda belirtilen oranlarda stopaj tevkifatı yaparak vergi dairesine yatırırlar.
-</div>
 </body></html>`;
 }
 
