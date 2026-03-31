@@ -376,18 +376,7 @@ textarea { resize: vertical; min-height: 64px; }
         </div>
       </div>
       <div class="divider"></div>
-
-            <!--KİRA ÖDEME GÜNÜ — FORMUN ÖNÜNDE -->
-      <div class="Kira-ödeme-günübox">
-        <div class="sec-title">Kira Ödeme Günü </div>
-        <div class="field">
-          <label>Kira Ödeme Günü</label>
-          <textarea id="ek_madde" placeholder="ör. Kiracı apartman ortak alanlarını temiz kullanmayı kabul eder."></textarea>
-        </div>
-      </div>
-
-      <div class="divider"></div>
-
+    
       <!-- KEFİL -->
       <div class="sec-group">
         <div class="sec-title">Kefil Bilgisi (Opsiyonel)</div>
@@ -841,7 +830,7 @@ function buildHTML(d){
   sonMaddeler.push('İhtilaf halinde Türkiye Cumhuriyeti mahkemeleri ve icra daireleri yetkilidir.');
   const tumMaddeler=[...getKosullar(),...sonMaddeler];
   const kosullarHTML=tumMaddeler.map((m,i)=>`<p class="madde">${i+1}- ${m}</p>`).join('');
-  const ekstraHTML=d.ek_madde?`<div class="section"><div class="sec-head">Ödeme Günü</div><p style="font-size:10.5pt;padding:6px 8px;line-height:1.6;color:#222;">${escapeHTML(d.ek_madde)}</p></div>`:'';
+  const ekstraHTML=d.ek_madde?`<div class="section"><div class="sec-head">Kira Ödeme Günü</div><p style="font-size:10.5pt;padding:6px 8px;line-height:1.6;color:#222;">${escapeHTML(d.ek_madde)}</p></div>`:'';
   const kefilVar=d.kefil_ad!=='..........'||d.kefil_tc!=='..........';
   return `<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><title>Kira Sözleşmesi</title>
