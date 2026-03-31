@@ -73,13 +73,6 @@ body {
   padding: 11px 15px; font-size: 12px; color: #6b6456; margin-bottom: 22px; line-height: 1.6;
 }
 .note strong { color: #8b3a2a; }
-
-/* ─── KİRA ÖDEME GÜNÜ ─────────────────── */
-.ekstra-kosul-box {
-  background: #fffdf5; border: 1.5px dashed #e8c96a;
-  border-radius: 9px; padding: 16px 18px; margin-bottom: 22px;
-}
-
 .sec-title {
   font-size: 11px; font-weight: 700; letter-spacing: 2px;
   text-transform: uppercase; color: #c9a84c; margin-bottom: 14px;
@@ -105,7 +98,7 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   border-color: #c9a84c; box-shadow: 0 0 0 3px rgba(201,168,76,0.13);
 }
-input.invalid { border-color: #c0392b !important; box-shadow: 0 0 0 3px rgba(192,57,43,0.12) !important; }
+input.invalid, select.invalid { border-color: #c0392b !important; box-shadow: 0 0 0 3px rgba(192,57,43,0.12) !important; }
 textarea { resize: vertical; min-height: 64px; }
 .divider { height: 1px; background: #d4c9b0; margin: 22px 0; }
 .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
@@ -266,6 +259,16 @@ textarea { resize: vertical; min-height: 64px; }
 .modal-btns button { flex: 1; padding: 11px; border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
 .modal-cancel  { background: #f0ece4; color: #6b6456; }
 .modal-confirm { background: #8b3a2a; color: #fff; }
+/* Kira günü aralık select'leri */
+select#kira_gunu_bas, select#kira_gunu_bit {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c9a84c' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+  cursor: pointer;
+}
 @media(max-width:600px){
   .tab-btn { font-size: 11.5px; padding: 10px 6px; gap: 4px; }
   .g2,.g3  { grid-template-columns: 1fr; }
@@ -323,8 +326,6 @@ textarea { resize: vertical; min-height: 64px; }
         <strong>📌 Not:</strong> Genel koşullar 2. sayfadan başlar. Ekstra madde alanı boş bırakılırsa eklenmez. <strong>Yıldızlı (*) alanlar zorunludur.</strong>
       </div>
 
-
-
       <!-- MÜLK BİLGİLERİ -->
       <div class="sec-group">
         <div class="sec-title">Mülk Bilgileri</div>
@@ -372,11 +373,26 @@ textarea { resize: vertical; min-height: 64px; }
           <div class="field"><label>Başlangıç Tarihi *</label><input type="date" id="baslangic"></div>
           <div class="field"><label>Kira Müddeti</label><input id="muddet" placeholder="ör. 1 Yıl"></div>
           <div class="field"><label>Ödeme Şekli</label><input id="odeme" placeholder="ör. Banka, Nakit"></div>
-
+          <!-- KİRA ÖDEME GÜNÜ ARALIĞI -->
+          <div class="field span2">
+            <label>📅 Kira Ödeme Günü Aralığı</label>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <select id="kira_gunu_bas" onchange="updateKiraGunu()" style="flex:1;min-width:120px;">
+                <option value="">— Başlangıç —</option>
+              </select>
+              <span style="color:#6b6456;font-size:13px;font-weight:600;white-space:nowrap;">ile</span>
+              <select id="kira_gunu_bit" onchange="updateKiraGunu()" style="flex:1;min-width:120px;">
+                <option value="">— Bitiş —</option>
+              </select>
+              <span style="color:#6b6456;font-size:13px;font-weight:600;white-space:nowrap;">arasında</span>
+            </div>
+            <div id="kira_gunu_preview" style="margin-top:6px;font-size:12px;color:#8b6a1a;background:#fef3d0;border:1px solid #e8c96a;border-radius:6px;padding:5px 10px;display:none;"></div>
+            <input type="hidden" id="kira_gunu">
+          </div>
         </div>
       </div>
       <div class="divider"></div>
-    
+
       <!-- KEFİL -->
       <div class="sec-group">
         <div class="sec-title">Kefil Bilgisi (Opsiyonel)</div>
@@ -468,11 +484,12 @@ const DRAFT_KEY    = 'kiraSozDraft';
 const ARCHIVE_KEY  = 'kiraSozArchive';
 const KOSULLAR_KEY = 'kiraSozKosullar';
 
+// kira_gunu select için özel okuma/yazma fonksiyonları kullanılacak
 const FIELD_IDS = [
   'cins','kullanim','mahallesi','dairesi','sokak','demirbas',
-  'ek_madde','veren_ad','veren_tc','banka','veren_tel',
+  'veren_ad','veren_tc','banka','veren_tel',
   'kiraci_ad','kiraci_tc','kiraci_tel',
-  'aylik_kira','pesinat','depozito','baslangic','muddet','odeme','kira_gunu','kira_gunu',
+  'aylik_kira','pesinat','depozito','baslangic','muddet','odeme','kira_gunu',
   'kefil_ad','kefil_tc'
 ];
 
@@ -496,8 +513,16 @@ const KOSULLAR_DEFAULT = [
   "Yıllık zam oranı TÜFE/ÜFE oranında artırılmayı taraflar kabul ve taahhüt eder."
 ];
 
-function g(id){ return (document.getElementById(id)?.value || '').trim(); }
-function setField(id, val){ const el=document.getElementById(id); if(el) el.value=val||''; }
+function g(id){
+  const el = document.getElementById(id);
+  if (!el) return '';
+  return (el.tagName === 'SELECT' ? el.value : el.value || '').trim();
+}
+function setField(id, val){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.value = val || '';
+}
 function escapeHTML(str=''){
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
@@ -547,11 +572,11 @@ function switchTab(tab){
 
 function readForm(){
   const data={};
-  FIELD_IDS.forEach(id=>data[id]=g(id));
+  FIELD_IDS.forEach(id=>{ data[id]=g(id); });
   return data;
 }
 function fillForm(data){
-  FIELD_IDS.forEach(id=>setField(id,data[id]));
+  FIELD_IDS.forEach(id=>setField(id, data[id]));
 }
 
 function validateForm(){
@@ -561,7 +586,7 @@ function validateForm(){
     ['aylik_kira','Aylık Kira (TL)'],
     ['baslangic', 'Başlangıç Tarihi']
   ];
-  document.querySelectorAll('input.invalid').forEach(el=>el.classList.remove('invalid'));
+  document.querySelectorAll('input.invalid,select.invalid').forEach(el=>el.classList.remove('invalid'));
   for(const [id,label] of zorunlu){
     if(!g(id)){
       const el=document.getElementById(id);
@@ -593,7 +618,7 @@ function loadDraft(){
 }
 function clearForm(){
   FIELD_IDS.forEach(id=>setField(id,''));
-  document.querySelectorAll('input.invalid').forEach(el=>el.classList.remove('invalid'));
+  document.querySelectorAll('input.invalid,select.invalid').forEach(el=>el.classList.remove('invalid'));
   localStorage.removeItem(DRAFT_KEY);
   document.getElementById('autosaveInfo').textContent='Taslak otomatik kaydedilir';
   toast('🗑️ Form temizlendi.','info');
@@ -807,7 +832,6 @@ function buildData(raw){
     dairesi:   raw.dairesi   ||'..........', mahallesi:raw.mahallesi  ||'..........',
     sokak:     raw.sokak     ||'..........', cins:     raw.cins       ||'..........',
     kullanim:  raw.kullanim  ||'..........', demirbas: raw.demirbas   ||'..........',
-    ek_madde:  raw.ek_madde  ||'',
     veren_ad:  raw.veren_ad  ||'..........', veren_tc: raw.veren_tc   ||'..........',
     banka:     raw.banka     ||'..........', veren_tel:raw.veren_tel  ||'..........',
     kiraci_ad: raw.kiraci_ad ||'..........', kiraci_tc:raw.kiraci_tc  ||'..........',
@@ -818,7 +842,6 @@ function buildData(raw){
     depozito:  raw.depozito ?fmtMoney(raw.depozito):'...........',
     muddet:    raw.muddet   ||'..........', baslangic:fmtDate(raw.baslangic),
     odeme:     raw.odeme    ||'..........', kira_gunu:raw.kira_gunu||'..........',
-    kira_gunu: raw.kira_gunu ||'..........',
     kefil_ad:  raw.kefil_ad ||'..........', kefil_tc:raw.kefil_tc||'..........'
   };
 }
@@ -830,7 +853,12 @@ function buildHTML(d){
   sonMaddeler.push('İhtilaf halinde Türkiye Cumhuriyeti mahkemeleri ve icra daireleri yetkilidir.');
   const tumMaddeler=[...getKosullar(),...sonMaddeler];
   const kosullarHTML=tumMaddeler.map((m,i)=>`<p class="madde">${i+1}- ${m}</p>`).join('');
-  const ekstraHTML=d.ek_madde?`<div class="section"><div class="sec-head">Kira Ödeme Günü</div><p style="font-size:10.5pt;padding:6px 8px;line-height:1.6;color:#222;">${escapeHTML(d.ek_madde)}</p></div>`:'';
+
+  // Kira ödeme günü satırı — sadece seçildiyse göster
+  const kiraGunuRow = d.kira_gunu && d.kira_gunu !== '..........'
+    ? `<tr><td>Kira Ödeme Günü</td><td><strong>${escapeHTML(d.kira_gunu)}</strong></td></tr>`
+    : '';
+
   const kefilVar=d.kefil_ad!=='..........'||d.kefil_tc!=='..........';
   return `<!DOCTYPE html>
 <html lang="tr"><head><meta charset="UTF-8"><title>Kira Sözleşmesi</title>
@@ -846,6 +874,8 @@ body{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background
 table.info{width:100%;border-collapse:collapse;}
 table.info td{padding:5px 8px;font-size:10.5pt;border-bottom:1px solid #ede8db;vertical-align:top;}
 table.info td:first-child{width:40%;font-weight:bold;color:#555;font-size:9.5pt;}
+table.info tr.highlight-row td{background:#fffbef;}
+table.info tr.highlight-row td:last-child{color:#8b4a00;font-weight:bold;font-size:11pt;}
 .page-break{page-break-before:always;break-before:page;}
 .madde{font-size:9.5pt;line-height:1.5;padding:4px 0;color:#222;border-bottom:1px dotted #e0d8cc;}
 .nusha{font-size:8.5pt;font-style:italic;color:#666;margin-top:8px;text-align:center;}
@@ -889,9 +919,8 @@ table.info td:first-child{width:40%;font-weight:bold;color:#555;font-size:9.5pt;
 <tr><td>Kira Müddeti</td><td>${escapeHTML(d.muddet)}</td></tr>
 <tr><td>Başlangıç Tarihi</td><td>${escapeHTML(d.baslangic)}</td></tr>
 <tr><td>Ödeme Şekli</td><td>${escapeHTML(d.odeme)}</td></tr>
-<tr><td>Kira Ödeme Günü</td><td>${escapeHTML(d.kira_gunu)}</td></tr>
+${kiraGunuRow}
 </table></div>
-${ekstraHTML}
 <div class="vergi">
   <strong>Gelir Vergisi Kanununa Göre:</strong>
   Tüccar, serbest meslek erbabı ve çiftçiler; ticari, mesleki ve zirai işleri ile ilgili olarak
@@ -955,13 +984,98 @@ function generatePdfFromEntry(id){
   if(win) toast('✅ PDF penceresi açıldı.','ok');
 }
 
-document.addEventListener('DOMContentLoaded',()=>{
-  loadDraft(); updateBadge(); updateKosullarBadge(); renderArchive();
-  FIELD_IDS.forEach(id=>{
-    const el=document.getElementById(id); if(!el) return;
-    el.addEventListener('input',scheduleAutoSave);
-    if(el.tagName==='SELECT') el.addEventListener('change',scheduleAutoSave);
-    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA') el.addEventListener('input',()=>el.classList.remove('invalid'));
+function gunLabel(n){
+  const ekler={1:'inci',2:'nci',3:'üncü',4:'üncü',5:'inci',6:'ncı',7:'nci',8:'inci',9:'uncu',10:'uncu',
+    11:'inci',12:'nci',13:'üncü',14:'üncü',15:'inci',16:'ncı',17:'nci',18:'inci',19:'uncu',20:'nci',
+    21:'inci',22:'nci',23:'üncü',24:'üncü',25:'inci',26:'ncı',27:'nci',28:'inci',29:'uncu',30:'uncu',31:'inci'};
+  return n+"'"+ekler[n];
+}
+
+function dolduruGunSelect(){
+  ['kira_gunu_bas','kira_gunu_bit'].forEach(function(id){
+    var sel=document.getElementById(id); if(!sel) return;
+    var prev=sel.value;
+    sel.innerHTML='<option value="">— Gün —</option>';
+    for(var i=1;i<=31;i++){
+      var opt=document.createElement('option');
+      opt.value=i; opt.textContent=i+'. gün';
+      sel.appendChild(opt);
+    }
+    if(prev) sel.value=prev;
+  });
+}
+
+function updateKiraGunu(){
+  var bas=document.getElementById('kira_gunu_bas') ? document.getElementById('kira_gunu_bas').value : '';
+  var bit=document.getElementById('kira_gunu_bit') ? document.getElementById('kira_gunu_bit').value : '';
+  var hidden=document.getElementById('kira_gunu');
+  var preview=document.getElementById('kira_gunu_preview');
+  if(!bas && !bit){
+    if(hidden) hidden.value='';
+    if(preview){ preview.style.display='none'; preview.textContent=''; }
+    return;
+  }
+  var metin='';
+  if(bas && bit){
+    var b=parseInt(bas), e=parseInt(bit);
+    if(b===e){
+      metin='Her ayın '+gunLabel(b)+' günü';
+    } else if(b<e){
+      metin='Her ayın '+gunLabel(b)+' ile '+gunLabel(e)+' günleri arasında';
+    } else {
+      if(preview){
+        preview.style.display='block'; preview.style.color='#8b3a2a';
+        preview.style.background='#fde8e8'; preview.style.borderColor='#e0b0b0';
+        preview.textContent='Bitiş günü başlangıç gününden küçük olamaz.';
+      }
+      if(hidden) hidden.value='';
+      return;
+    }
+  } else if(bas){
+    metin='Her ayın '+gunLabel(parseInt(bas))+' gününden itibaren';
+  } else {
+    metin='Her ayın '+gunLabel(parseInt(bit))+' gününe kadar';
+  }
+  if(hidden) hidden.value=metin;
+  if(preview){
+    preview.style.display='block'; preview.style.color='#8b6a1a';
+    preview.style.background='#fef3d0'; preview.style.borderColor='#e8c96a';
+    preview.textContent='PDF\'te görünecek: '+metin;
+  }
+  scheduleAutoSave();
+}
+
+function restoreKiraGunuSelects(val){
+  if(!val) return;
+  var m=val.match(/ayın (\d+)['''][\w\u00fc\u0131\u00f6\u00e7\u015f]+\s+ile\s+(\d+)/i);
+  if(m){
+    var bas=document.getElementById('kira_gunu_bas');
+    var bit=document.getElementById('kira_gunu_bit');
+    if(bas) bas.value=m[1];
+    if(bit) bit.value=m[2];
+    updateKiraGunu(); return;
+  }
+  var m2=val.match(/ayın (\d+)/i);
+  if(m2){
+    var bas2=document.getElementById('kira_gunu_bas');
+    var bit2=document.getElementById('kira_gunu_bit');
+    if(bas2) bas2.value=m2[1];
+    if(bit2) bit2.value=m2[1];
+    updateKiraGunu();
+  }
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  dolduruGunSelect();
+  loadDraft();
+  var hidden=document.getElementById('kira_gunu');
+  if(hidden && hidden.value) restoreKiraGunuSelects(hidden.value);
+  updateBadge(); updateKosullarBadge(); renderArchive();
+  FIELD_IDS.forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    el.addEventListener('input', scheduleAutoSave);
+    if(el.tagName==='SELECT') el.addEventListener('change', scheduleAutoSave);
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA') el.addEventListener('input',function(){ el.classList.remove('invalid'); });
   });
 });
 </script>
