@@ -1,1181 +1,421 @@
 <!DOCTYPE html>
-
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kira Sözleşmesi</title>
-<style>
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  font-family: 'Segoe UI', Tahoma, sans-serif;
-  background: #1a1a2e;
-  min-height: 100vh;
-  padding: 30px 16px 60px;
-}
-.header { text-align: center; margin-bottom: 22px; }
-.header h1 { font-size: 30px; color: #fff; font-weight: 700; }
-.header h1 span { color: #c9a84c; }
-.header p { color: rgba(255,255,255,0.4); font-size: 13px; margin-top: 6px; }
-.tab-bar { max-width: 720px; margin: 0 auto 16px; display: flex; gap: 8px; }
-.tab-btn {
-  flex: 1; padding: 11px 10px; border: none; border-radius: 9px 9px 0 0;
-  font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.55);
-  border-bottom: 3px solid transparent;
-}
-.tab-btn.active { background: #faf8f3; color: #1a1a2e; border-bottom: 3px solid #c9a84c; }
-.tab-btn .badge {
-  background: #c9a84c; color: #1a1a2e; font-size: 10px; font-weight: 800;
-  padding: 1px 6px; border-radius: 10px; min-width: 20px; text-align: center;
-}
-.panel { display: none; }
-.panel.active { display: block; }
-.card {
-  max-width: 720px; margin: 0 auto; background: #faf8f3;
-  border-radius: 0 0 14px 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.5);
-}
-.card-top {
-  background: #1a1a2e; padding: 18px 28px; border-bottom: 2px solid #c9a84c;
-  display: flex; align-items: center; gap: 12px;
-}
-.card-top .icon {
-  width: 38px; height: 38px; background: linear-gradient(135deg,#c9a84c,#e8c96a);
-  border-radius: 9px; display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-.card-top h2 { color: #fff; font-size: 17px; }
-.card-top p { color: rgba(255,255,255,0.45); font-size: 12px; margin-top: 2px; }
-.form-body { padding: 28px; }
-.autosave-bar {
-  background: #f0f7f0; border: 1px solid #b8dab8; border-radius: 7px;
-  padding: 9px 14px; font-size: 11.5px; color: #2d6a4f; margin-bottom: 16px;
-  display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
-}
-.autosave-bar span { display:flex; align-items:center; gap:5px; }
-.autosave-bar .btn-sm {
-  padding: 5px 12px; background: #2d6a4f; color: #fff; border: none;
-  border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
-}
-.autosave-bar .btn-sm:hover { opacity: 0.85; }
-.autosave-bar .btn-sm.danger { background: #8b3a2a; }
-.kosul-info-chip {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: #fef3d0; border: 1px solid #e8c96a; border-radius: 6px;
-  padding: 7px 14px; font-size: 12px; color: #6b4c10; margin-bottom: 14px;
-  cursor: pointer; transition: background 0.2s; width: 100%;
-}
-.kosul-info-chip:hover { background: #fde8a0; }
-.kosul-info-chip u { color: #8b6a1a; font-weight: 700; }
-
-/* Mülk tipi göstergesi */
-.mulk-tipi-bar {
-display: flex; align-items: center; gap: 8px;
-background: #e8f4fd; border: 1px solid #90caf9; border-radius: 7px;
-padding: 8px 14px; font-size: 12px; color: #1a4a6e; margin-bottom: 14px;
-}
-.mulk-tipi-bar .tipi-badge {
-font-weight: 800; padding: 2px 10px; border-radius: 12px;
-background: #1a1a2e; color: #c9a84c; font-size: 11px; letter-spacing: 0.5px;
-}
-.mulk-tipi-bar.isyeri { background: #fff3e0; border-color: #ffb74d; color: #7a4a00; }
-.mulk-tipi-bar.isyeri .tipi-badge { background: #e65100; color: #fff; }
-
-.note {
-background: #fef9ea; border: 1px solid #e8d5a3; border-radius: 7px;
-padding: 11px 15px; font-size: 12px; color: #6b6456; margin-bottom: 22px; line-height: 1.6;
-}
-.note strong { color: #8b3a2a; }
-.sec-title {
-font-size: 11px; font-weight: 700; letter-spacing: 2px;
-text-transform: uppercase; color: #c9a84c; margin-bottom: 14px;
-padding-bottom: 7px; border-bottom: 1px solid #d4c9b0;
-display: flex; align-items: center; gap: 7px;
-}
-.sec-title::before { content:’’; width:3px; height:13px; background:#c9a84c; border-radius:2px; }
-.sec-group { margin-bottom: 26px; }
-.grid { display: grid; gap: 12px; }
-.g2 { grid-template-columns: 1fr 1fr; }
-.g3 { grid-template-columns: 1fr 1fr 1fr; }
-.span2 { grid-column: span 2; }
-.field { display: flex; flex-direction: column; gap: 4px; }
-label {
-font-size: 10.5px; font-weight: 600; letter-spacing: 0.7px;
-text-transform: uppercase; color: #6b6456;
-}
-input, textarea, select {
-padding: 9px 12px; border: 1.5px solid #d4c9b0; border-radius: 7px;
-font-family: inherit; font-size: 14px; color: #1a1a2e; background: #fff;
-outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-}
-input:focus, textarea:focus, select:focus {
-border-color: #c9a84c; box-shadow: 0 0 0 3px rgba(201,168,76,0.13);
-}
-input.invalid, select.invalid { border-color: #c0392b !important; box-shadow: 0 0 0 3px rgba(192,57,43,0.12) !important; }
-textarea { resize: vertical; min-height: 64px; }
-.divider { height: 1px; background: #d4c9b0; margin: 22px 0; }
-.btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 6px; }
-.btn {
-width: 100%; padding: 14px; border: none; border-radius: 9px;
-font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
-display: flex; align-items: center; justify-content: center; gap: 8px;
-transition: transform 0.2s, box-shadow 0.2s;
-}
-.btn:hover { transform: translateY(-1px); }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.btn-gold {
-background: linear-gradient(135deg,#c9a84c,#e8c96a); color: #1a1a2e;
-box-shadow: 0 4px 18px rgba(201,168,76,0.35);
-}
-.btn-gold:hover { box-shadow: 0 8px 28px rgba(201,168,76,0.5); }
-.btn-dark { background: #1a1a2e; color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
-.btn-dark:hover { box-shadow: 0 8px 22px rgba(0,0,0,0.4); }
-.btn-full { grid-column: span 2; }
-.spinner {
-display: none; width: 18px; height: 18px;
-border: 2.5px solid rgba(26,26,46,0.25); border-top-color: #1a1a2e;
-border-radius: 50%; animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.archive-card {
-max-width: 720px; margin: 0 auto; background: #faf8f3;
-border-radius: 0 0 14px 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.5);
-}
-.archive-toolbar {
-padding: 14px 18px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
-border-bottom: 1px solid #d4c9b0; background: #f5f0e8;
-}
-.search-box {
-flex: 1; min-width: 160px; padding: 9px 14px; border: 1.5px solid #d4c9b0;
-border-radius: 7px; font-family: inherit; font-size: 13px; color: #1a1a2e;
-background: #fff; outline: none;
-}
-.search-box:focus { border-color: #c9a84c; }
-.sort-select {
-padding: 9px 12px; border: 1.5px solid #d4c9b0; border-radius: 7px;
-font-family: inherit; font-size: 12.5px; background: #fff; cursor: pointer;
-outline: none; color: #1a1a2e;
-}
-.sort-select:focus { border-color: #c9a84c; }
-.btn-sm-arc {
-padding: 9px 13px; background: #1a1a2e; color: #fff; border: none;
-border-radius: 7px; font-family: inherit; font-size: 12px; font-weight: 700;
-cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
-display: inline-flex; align-items: center; gap: 5px;
-}
-.btn-sm-arc:hover { opacity: 0.82; }
-.import-lbl { cursor: pointer; }
-.btn-archive-clear {
-padding: 9px 13px; background: #8b3a2a; color: #fff; border: none;
-border-radius: 7px; font-family: inherit; font-size: 12px; font-weight: 700;
-cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
-}
-.btn-archive-clear:hover { opacity: 0.85; }
-.archive-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; min-height: 200px; }
-.archive-empty { text-align: center; padding: 40px 20px; color: #a09280; font-size: 14px; }
-.archive-empty .icon-big { font-size: 40px; margin-bottom: 10px; }
-.arc-item {
-background: #fff; border: 1.5px solid #d4c9b0; border-radius: 10px;
-padding: 14px 16px; transition: border-color 0.2s, box-shadow 0.2s;
-}
-.arc-item:hover { border-color: #c9a84c; box-shadow: 0 4px 16px rgba(201,168,76,0.15); }
-.arc-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
-.arc-name { font-weight: 700; font-size: 15px; color: #1a1a2e; }
-.arc-date { font-size: 11px; color: #a09280; white-space: nowrap; }
-.arc-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-.arc-tag { background: #f5f0e8; color: #6b6456; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 600; }
-.arc-tag.gold { background: #fef3d0; color: #8b6a1a; }
-.arc-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.btn-arc {
-padding: 6px 14px; border: none; border-radius: 6px;
-font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
-}
-.btn-arc:hover { opacity: 0.82; }
-.btn-arc-load { background: #1a1a2e; color: #fff; }
-.btn-arc-pdf  { background: linear-gradient(135deg,#c9a84c,#e8c96a); color: #1a1a2e; }
-.btn-arc-del  { background: #f5f0e8; color: #8b3a2a; border: 1px solid #e0cfc0; }
-.kosullar-card {
-max-width: 720px; margin: 0 auto; background: #faf8f3;
-border-radius: 0 0 14px 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.5);
-}
-.kosul-toolbar {
-padding: 14px 20px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
-border-bottom: 1px solid #d4c9b0; background: #f5f0e8;
-}
-.kosul-count-badge {
-padding: 7px 14px; background: #fff; border: 1.5px solid #d4c9b0; border-radius: 7px;
-font-size: 12.5px; color: #6b6456; font-weight: 600; white-space: nowrap;
-}
-.kosul-count-badge strong { color: #c9a84c; }
-.kosullar-body { padding: 20px 24px; }
-.kosul-list { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
-.kosul-item {
-display: flex; align-items: flex-start; gap: 8px; background: #fff;
-border: 1.5px solid #d4c9b0; border-radius: 9px; padding: 10px 12px;
-transition: border-color 0.2s, box-shadow 0.2s;
-}
-.kosul-item:hover { border-color: #c9a84c; }
-.kosul-item.editing { border-color: #c9a84c; box-shadow: 0 0 0 3px rgba(201,168,76,0.15); background: #fffdf5; }
-.kosul-item.new-item { border-color: #2d6a4f; box-shadow: 0 0 0 3px rgba(45,106,79,0.12); background: #f0f7f0; }
-.kosul-num {
-background: #1a1a2e; color: #c9a84c; font-size: 9px; font-weight: 800;
-padding: 3px 7px; border-radius: 5px; flex-shrink: 0; margin-top: 4px;
-min-width: 28px; text-align: center; letter-spacing: 0.5px;
-}
-.kosul-text {
-flex: 1; font-size: 12.5px; color: #1a1a2e; line-height: 1.55;
-border: none; outline: none; background: transparent; resize: none;
-font-family: inherit; padding: 2px 0; min-height: 38px; overflow: hidden;
-}
-.kosul-text[readonly] { cursor: default; }
-.kosul-text:not([readonly]) {
-background: transparent; border-bottom: 1.5px dashed #c9a84c;
-padding-bottom: 4px; cursor: text;
-}
-.kosul-btns { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
-.kosul-btn {
-width: 28px; height: 28px; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;
-display: flex; align-items: center; justify-content: center; transition: opacity 0.2s, transform 0.15s;
-}
-.kosul-btn:hover { opacity: 0.78; transform: scale(1.08); }
-.kosul-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-.kb-edit   { background: #f0ece4; color: #1a1a2e; }
-.kb-save   { background: #2d6a4f; color: #fff; }
-.kb-cancel { background: #fde8e8; color: #8b3a2a; }
-.kb-up     { background: #e8f0fe; color: #1a4a6e; }
-.kb-down   { background: #e8f0fe; color: #1a4a6e; }
-.kb-del    { background: #fde8e8; color: #8b3a2a; }
-.toast {
-display: none; position: fixed; top: 18px; left: 50%;
-transform: translateX(-50%) translateY(-60px); color: #fff;
-padding: 11px 22px; border-radius: 25px; font-size: 14px; font-weight: 600;
-box-shadow: 0 6px 25px rgba(0,0,0,0.3); z-index: 9999;
-transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap;
-}
-.toast.show { display: block; transform: translateX(-50%) translateY(0); }
-.toast.ok   { background: #2d6a4f; }
-.toast.err  { background: #8b3a2a; }
-.toast.info { background: #1a4a6e; }
-.modal-overlay {
-display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-z-index: 8000; align-items: center; justify-content: center;
-}
-.modal-overlay.show { display: flex; }
-.modal-box {
-background: #faf8f3; border-radius: 12px; padding: 28px 24px 22px;
-max-width: 360px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.5); text-align: center;
-}
-.modal-box .modal-icon { font-size: 36px; margin-bottom: 10px; }
-.modal-box h3 { color: #1a1a2e; font-size: 17px; margin-bottom: 8px; }
-.modal-box p  { color: #6b6456; font-size: 13px; line-height: 1.5; margin-bottom: 20px; }
-.modal-btns   { display: flex; gap: 10px; }
-.modal-btns button { flex: 1; padding: 11px; border: none; border-radius: 8px; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
-.modal-cancel  { background: #f0ece4; color: #6b6456; }
-.modal-confirm { background: #8b3a2a; color: #fff; }
-select#kira_gunu_bas, select#kira_gunu_bit {
-appearance: none;
--webkit-appearance: none;
-background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘8’ viewBox=‘0 0 12 8’%3E%3Cpath d=‘M1 1l5 5 5-5’ stroke=’%23c9a84c’ stroke-width=‘2’ fill=‘none’ stroke-linecap=‘round’/%3E%3C/svg%3E”);
-background-repeat: no-repeat;
-background-position: right 10px center;
-padding-right: 30px;
-cursor: pointer;
-}
-@media(max-width:600px){
-.tab-btn { font-size: 11.5px; padding: 10px 6px; gap: 4px; }
-.g2,.g3  { grid-template-columns: 1fr; }
-.span2   { grid-column: span 1; }
-.btn-full { grid-column: span 1; }
-.form-body, .archive-list, .kosullar-body { padding: 16px; }
-.btn-row { grid-template-columns: 1fr; }
-.archive-toolbar { gap: 6px; }
-}
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kira Sözleşmesi Oluşturucu</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            padding: 30px 16px 60px;
+        }
+        .header { text-align: center; margin-bottom: 22px; }
+        .header h1 { font-size: 30px; color: #fff; font-weight: 700; }
+        .header h1 span { color: #c9a84c; }
+        .header p { color: rgba(255,255,255,0.4); font-size: 13px; margin-top: 6px; }
+        .tab-bar { max-width: 720px; margin: 0 auto 16px; display: flex; gap: 8px; }
+        .tab-btn {
+            flex: 1; padding: 11px 10px; border: none; border-radius: 9px 9px 0 0;
+            font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 7px;
+            background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.55);
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn.active { background: #faf8f3; color: #1a1a2e; border-bottom: 3px solid #c9a84c; }
+        .tab-btn .badge {
+            background: #c9a84c; color: #1a1a2e; font-size: 10px; font-weight: 800;
+            padding: 1px 6px; border-radius: 10px; min-width: 20px; text-align: center;
+        }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .card {
+            max-width: 720px; margin: 0 auto; background: #faf8f3;
+            border-radius: 0 0 14px 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.5);
+        }
+        .card-top {
+            background: #1a1a2e; padding: 18px 28px; border-bottom: 2px solid #c9a84c;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .card-top .icon {
+            width: 38px; height: 38px; background: linear-gradient(135deg,#c9a84c,#e8c96a);
+            border-radius: 9px; display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .card-top h2 { color: #fff; font-size: 17px; }
+        .card-top p { color: rgba(255,255,255,0.45); font-size: 12px; margin-top: 2px; }
+        .form-body { padding: 28px; }
+        .autosave-bar {
+            background: #f0f7f0; border: 1px solid #b8dab8; border-radius: 7px;
+            padding: 9px 14px; font-size: 11.5px; color: #2d6a4f; margin-bottom: 16px;
+            display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+        }
+        .mulk-tipi-bar {
+            display: flex; align-items: center; gap: 8px;
+            background: #e8f4fd; border: 1px solid #90caf9; border-radius: 7px;
+            padding: 8px 14px; font-size: 12px; color: #1a4a6e; margin-bottom: 14px;
+        }
+        .mulk-tipi-bar.isyeri { background: #fff3e0; border-color: #ffb74d; color: #7a4a00; }
+        .tipi-badge { font-weight: 800; padding: 2px 10px; border-radius: 12px; background: #1a1a2e; color: #c9a84c; }
+        .isyeri .tipi-badge { background: #e65100; color: #fff; }
+        .note { background: #fef9ea; border: 1px solid #e8d5a3; border-radius: 7px; padding: 11px 15px; font-size: 12px; color: #6b6456; margin-bottom: 22px; }
+        .sec-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #c9a84c; margin-bottom: 14px; padding-bottom: 7px; border-bottom: 1px solid #d4c9b0; display: flex; align-items: center; gap: 7px; }
+        .grid { display: grid; gap: 12px; }
+        .g2 { grid-template-columns: 1fr 1fr; }
+        .g3 { grid-template-columns: 1fr 1fr 1fr; }
+        .span2 { grid-column: span 2; }
+        .field { display: flex; flex-direction: column; gap: 4px; }
+        label { font-size: 10.5px; font-weight: 600; color: #6b6456; text-transform: uppercase; }
+        input, textarea, select { padding: 9px 12px; border: 1.5px solid #d4c9b0; border-radius: 7px; font-size: 14px; }
+        input:focus { border-color: #c9a84c; outline: none; }
+        .divider { height: 1px; background: #d4c9b0; margin: 22px 0; }
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn { padding: 14px; border: none; border-radius: 9px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-gold { background: linear-gradient(135deg,#c9a84c,#e8c96a); color: #1a1a2e; }
+        .btn-dark { background: #1a1a2e; color: #fff; }
+        .btn-full { grid-column: span 2; margin-top: 10px; }
+        .spinner { display: none; width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .toast { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 50px; color: #fff; z-index: 9999; font-weight: 600; }
+        .toast.ok { background: #2d6a4f; }
+        .toast.err { background: #8b3a2a; }
+        .archive-list { padding: 20px; }
+        .arc-item { background: #fff; border: 1px solid #d4c9b0; padding: 15px; border-radius: 10px; margin-bottom: 10px; }
+        .kosul-item { display: flex; gap: 10px; background: #fff; padding: 10px; border: 1px solid #d4c9b0; border-radius: 8px; margin-bottom: 8px; }
+        .kosul-text { flex: 1; border: none; resize: none; font-size: 13px; }
+        @media(max-width:600px){ .g2, .g3 { grid-template-columns: 1fr; } .span2 { grid-column: span 1; } }
+    </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>Kira <span>Sözleşmesi</span></h1>
-  <p>Sözleşme oluşturun · Kaydedin · Arşivleyin</p>
+    <h1>Kira <span>Sözleşmesi</span></h1>
+    <p>Profesyonel Sözleşme Oluşturucu</p>
 </div>
 
 <div class="tab-bar">
-  <button class="tab-btn active" id="tab-form" onclick="switchTab('form')">📝 Sözleşme Formu</button>
-  <button class="tab-btn" id="tab-archive" onclick="switchTab('archive')">
-    🗂️ Arşiv <span class="badge" id="archiveBadge">0</span>
-  </button>
-  <button class="tab-btn" id="tab-kosullar" onclick="switchTab('kosullar')">
-    ⚙️ Koşullar <span class="badge" id="kosullarBadge">17</span>
-  </button>
+    <button class="tab-btn active" id="tab-form" onclick="switchTab('form')">📝 Form</button>
+    <button class="tab-btn" id="tab-archive" onclick="switchTab('archive')">🗂️ Arşiv <span class="badge" id="archiveBadge">0</span></button>
+    <button class="tab-btn" id="tab-kosullar" onclick="switchTab('kosullar')">⚙️ Koşullar <span class="badge" id="kosullarBadge">17</span></button>
 </div>
-
-<!-- ══════════════ FORM PANELİ ══════════════ -->
 
 <div class="panel active" id="panel-form">
-  <div class="card">
-    <div class="card-top">
-      <div class="icon">🏠</div>
-      <div>
-        <h2>Sözleşme Formu</h2>
-        <p>Tüm alanları eksiksiz doldurunuz</p>
-      </div>
-    </div>
-
-```
-<div class="form-body">
-
-  <div class="autosave-bar">
-    <span>💾 <span id="autosaveInfo">Taslak otomatik kaydedilir</span></span>
-    <div style="display:flex;gap:7px;flex-wrap:wrap">
-      <button class="btn-sm" onclick="saveDraft()">💾 Taslağı Kaydet</button>
-      <button class="btn-sm danger" onclick="confirmClearDraft()">🗑️ Formu Temizle</button>
-    </div>
-  </div>
-
-  <!-- MÜLK TİPİ GÖSTERGESİ -->
-  <div class="mulk-tipi-bar" id="mulkTipiBar">
-    <span>📋 Koşullardaki mülk ifadesi:</span>
-    <span class="tipi-badge" id="mulkTipiBadge">EV</span>
-    <span id="mulkTipiAciklama" style="font-size:11px;opacity:0.8">— Kullanım amacına göre otomatik değişir</span>
-  </div>
-
-  <div class="kosul-info-chip" onclick="switchTab('kosullar')">
-    📋 PDF'e <strong><span id="kosulCount">17</span> genel koşul</strong> eklenecek &nbsp;—&nbsp; <u>Koşulları Düzenle →</u>
-  </div>
-
-  <div class="note">
-    <strong>📌 Not:</strong> Genel koşullar 2. sayfadan başlar. Ekstra madde alanı boş bırakılırsa eklenmez. <strong>Yıldızlı (*) alanlar zorunludur.</strong>
-    <br><strong>🏠/🏢 İpucu:</strong> "Kullanım Amacı" alanında <em>ticari, işyeri, dükkan, ofis</em> gibi kelimeler girilirse koşullardaki <em>"ev"</em> ifadesi otomatik <em>"işyeri"</em> olarak değişir.
-  </div>
-
-  <!-- MÜLK BİLGİLERİ -->
-  <div class="sec-group">
-    <div class="sec-title">Mülk Bilgileri</div>
-    <div class="grid g2">
-      <div class="field"><label>Kiralananın Cinsi *</label><input id="cins" placeholder="ör. Daire, Dükkan, Ofis"></div>
-      <div class="field"><label>Kullanım Amacı</label><input id="kullanim" placeholder="ör. Mesken, Ticari amaç" oninput="onKullanimChange()"></div>
-      <div class="field"><label>Mahallesi</label><input id="mahallesi" placeholder="Mahalle adı"></div>
-      <div class="field"><label>İlçe / İl</label><input id="dairesi" placeholder="ör. Çerkezköy / Tekirdağ"></div>
-      <div class="field span2"><label>Sokağı ve Numarası</label><input id="sokak" placeholder="Sokak adı ve kapı numarası"></div>
-      <div class="field span2"><label>Demirbaş Listesi</label><textarea id="demirbas" placeholder="Teslim edilen eşyalar..."></textarea></div>
-    </div>
-  </div>
-  <div class="divider"></div>
-
-  <!-- KİRAYA VEREN -->
-  <div class="sec-group">
-    <div class="sec-title">Kiraya Veren (Mal Sahibi)</div>
-    <div class="grid g2">
-      <div class="field"><label>Adı Soyadı *</label><input id="veren_ad" placeholder="Ad Soyad"></div>
-      <div class="field"><label>T.C. Kimlik No</label><input id="veren_tc" placeholder="00000000000" maxlength="11" inputmode="numeric"></div>
-      <div class="field"><label>Cep Telefonu</label><input id="veren_tel" placeholder="05XX XXX XX XX" inputmode="tel"></div>
-      <div class="field span2"><label>Banka Hesap No (IBAN)</label><input id="banka" placeholder="TR00 0000 0000 0000 0000 0000 00" maxlength="32"></div>
-    </div>
-  </div>
-  <div class="divider"></div>
-
-  <!-- KİRACI -->
-  <div class="sec-group">
-    <div class="sec-title">Kiracı Bilgileri</div>
-    <div class="grid g2">
-      <div class="field"><label>Adı Soyadı *</label><input id="kiraci_ad" placeholder="Ad Soyad"></div>
-      <div class="field"><label>T.C. Kimlik No</label><input id="kiraci_tc" placeholder="00000000000" maxlength="11" inputmode="numeric"></div>
-      <div class="field"><label>Telefon</label><input id="kiraci_tel" placeholder="05XX XXX XX XX" inputmode="tel"></div>
-    </div>
-  </div>
-  <div class="divider"></div>
-
-  <!-- KİRA BİLGİLERİ -->
-  <div class="sec-group">
-    <div class="sec-title">Kira Bilgileri</div>
-    <div class="grid g3">
-      <div class="field"><label>Aylık Kira (TL) *</label><input type="number" id="aylik_kira" placeholder="0" min="0"></div>
-      <div class="field"><label>Peşinat (TL)</label><input type="number" id="pesinat" placeholder="0" min="0"></div>
-      <div class="field"><label>Depozito (TL)</label><input type="number" id="depozito" placeholder="0" min="0"></div>
-      <div class="field"><label>Başlangıç Tarihi *</label><input type="date" id="baslangic"></div>
-      <div class="field"><label>Kira Müddeti</label><input id="muddet" placeholder="ör. 1 Yıl"></div>
-      <div class="field"><label>Ödeme Şekli</label><input id="odeme" placeholder="ör. Banka, Nakit"></div>
-      <div class="field span2">
-        <label>📅 Kira Ödeme Günü Aralığı</label>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <select id="kira_gunu_bas" onchange="updateKiraGunu()" style="flex:1;min-width:120px;">
-            <option value="">— Başlangıç —</option>
-          </select>
-          <span style="color:#6b6456;font-size:13px;font-weight:600;white-space:nowrap;">ile</span>
-          <select id="kira_gunu_bit" onchange="updateKiraGunu()" style="flex:1;min-width:120px;">
-            <option value="">— Bitiş —</option>
-          </select>
-          <span style="color:#6b6456;font-size:13px;font-weight:600;white-space:nowrap;">arasında</span>
+    <div class="card">
+        <div class="card-top">
+            <div class="icon">🏠</div>
+            <div><h2>Sözleşme Bilgileri</h2><p>Lütfen yıldızlı alanları doldurun</p></div>
         </div>
-        <div id="kira_gunu_preview" style="margin-top:6px;font-size:12px;color:#8b6a1a;background:#fef3d0;border:1px solid #e8c96a;border-radius:6px;padding:5px 10px;display:none;"></div>
-        <input type="hidden" id="kira_gunu">
-      </div>
+        <div class="form-body">
+            <div class="autosave-bar">
+                <span>💾 <span id="autosaveInfo">Taslak otomatik kaydedilir</span></span>
+                <button style="padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="clearForm()">🗑️ Temizle</button>
+            </div>
+
+            <div class="mulk-tipi-bar" id="mulkTipiBar">
+                <span class="tipi-badge" id="mulkTipiBadge">EV</span>
+                <span id="mulkTipiAciklama">Kullanım amacına göre otomatik belirlenir.</span>
+            </div>
+
+            <div class="sec-group">
+                <div class="sec-title">Mülk Bilgileri</div>
+                <div class="grid g2">
+                    <div class="field"><label>Kiralananın Cinsi *</label><input id="cins" placeholder="ör. Daire, Dükkan"></div>
+                    <div class="field"><label>Kullanım Amacı</label><input id="kullanim" placeholder="ör. Mesken, İşyeri" oninput="updateMulkTipiBar()"></div>
+                    <div class="field"><label>Mahalle</label><input id="mahallesi" placeholder="Mahalle"></div>
+                    <div class="field"><label>İlçe / İl</label><input id="dairesi" placeholder="Çerkezköy / Tekirdağ"></div>
+                    <div class="field span2"><label>Adres Detay</label><input id="sokak" placeholder="Sokak, No, Daire"></div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="sec-group">
+                <div class="sec-title">Taraflar</div>
+                <div class="grid g2">
+                    <div class="field"><label>Kiraya Veren *</label><input id="veren_ad" placeholder="Ad Soyad"></div>
+                    <div class="field"><label>Kiracı *</label><input id="kiraci_ad" placeholder="Ad Soyad"></div>
+                    <div class="field"><label>Veren TC</label><input id="veren_tc" maxlength="11"></div>
+                    <div class="field"><label>Kiracı TC</label><input id="kiraci_tc" maxlength="11"></div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="sec-group">
+                <div class="sec-title">Ödeme ve Süre</div>
+                <div class="grid g3">
+                    <div class="field"><label>Aylık Kira *</label><input type="number" id="aylik_kira"></div>
+                    <div class="field"><label>Depozito</label><input type="number" id="depozito"></div>
+                    <div class="field"><label>Başlangıç *</label><input type="date" id="baslangic"></div>
+                    <div class="field"><label>Müddet</label><input id="muddet" placeholder="1 Yıl"></div>
+                    <div class="field span2"><label>IBAN</label><input id="banka" placeholder="TR..."></div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="btn-row">
+                <button class="btn btn-dark" onclick="saveToArchive()">🗂️ Arşive Kaydet</button>
+                <button class="btn btn-gold" id="genBtn" onclick="generate()">
+                    <span id="btnIcon">⬇</span> <span id="btnText">PDF Oluştur</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+                <button class="btn btn-gold btn-full" onclick="generateAndSave()">📥 PDF Oluştur ve Arşive Kaydet</button>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="divider"></div>
-
-  <!-- KEFİL -->
-  <div class="sec-group">
-    <div class="sec-title">Kefil Bilgisi (Opsiyonel)</div>
-    <div class="grid g2">
-      <div class="field"><label>Kefil Adı Soyadı</label><input id="kefil_ad" placeholder="Ad Soyad (isteğe bağlı)"></div>
-      <div class="field"><label>Kefil T.C. Kimlik No</label><input id="kefil_tc" placeholder="00000000000" maxlength="11" inputmode="numeric"></div>
-    </div>
-  </div>
-
-  <!-- BUTONLAR -->
-  <div class="btn-row">
-    <button class="btn btn-dark" onclick="saveToArchive()">🗂️ Arşive Kaydet</button>
-    <button class="btn btn-gold" id="genBtn" onclick="generate()">
-      <span id="btnIcon">⬇</span>
-      <span id="btnText">PDF Oluştur</span>
-      <div class="spinner" id="spinner"></div>
-    </button>
-    <button class="btn btn-gold btn-full" id="genSaveBtn" onclick="generateAndSave()">
-      <span id="genSaveIcon">📥</span>
-      <span id="genSaveText">PDF Oluştur + Arşive Kaydet</span>
-      <div class="spinner" id="spinner2"></div>
-    </button>
-  </div>
-
 </div>
-```
-
-  </div>
-</div>
-
-<!-- ══════════════ ARŞİV PANELİ ══════════════ -->
 
 <div class="panel" id="panel-archive">
-  <div class="archive-card">
-    <div class="card-top">
-      <div class="icon">🗂️</div>
-      <div><h2>Sözleşme Arşivi</h2><p>Kaydedilen sözleşmeler — tarayıcıda saklanır</p></div>
+    <div class="card">
+        <div class="archive-list" id="archiveList"></div>
     </div>
-    <div class="archive-toolbar">
-      <input class="search-box" id="searchBox" placeholder="🔍  Kiracı adı, mülk, tarih ara..." oninput="renderArchive()">
-      <select id="sortSelect" class="sort-select" onchange="renderArchive()">
-        <option value="newest">🕐 En Yeni</option>
-        <option value="oldest">📅 En Eski</option>
-        <option value="name">🔤 İsme Göre</option>
-      </select>
-      <button class="btn-sm-arc" onclick="exportArchive()">📦 Dışa Aktar</button>
-      <label class="btn-sm-arc import-lbl">📂 İçe Aktar<input type="file" accept=".json" onchange="importArchive(this)" style="display:none"></label>
-      <button class="btn-archive-clear" onclick="confirmClearAll()">🗑️ Tümünü Sil</button>
-    </div>
-    <div class="archive-list" id="archiveList"></div>
-  </div>
 </div>
 
-<!-- ══════════════ KOŞULLAR PANELİ ══════════════ -->
-
 <div class="panel" id="panel-kosullar">
-  <div class="kosullar-card">
-    <div class="card-top">
-      <div class="icon">⚙️</div>
-      <div><h2>Genel Koşullar Editörü</h2><p>Maddeleri düzenle · sırala · ekle · sil</p></div>
+    <div class="card">
+        <div style="padding:20px;" id="kosulList"></div>
+        <div style="padding:20px; text-align:center;">
+            <button class="btn btn-dark" onclick="resetKosullar()">Varsayılana Sıfırla</button>
+        </div>
     </div>
-    <div class="kosullar-body">
-      <div class="kosul-toolbar">
-        <span class="kosul-count-badge">📋 Toplam: <strong id="kosulCountPanel">17</strong> madde</span>
-        <button class="btn-sm-arc" style="background:linear-gradient(135deg,#c9a84c,#e8c96a);color:#1a1a2e;" onclick="addKosul()">➕ Yeni Madde Ekle</button>
-        <button class="btn-sm-arc" onclick="resetKosullar()">🔄 Varsayılana Sıfırla</button>
-      </div>
-      <div class="note" style="margin-top:14px;margin-bottom:0">
-        <strong>💡 Kullanım:</strong>
-        <strong>✏️</strong> düzenle, <strong>💾</strong> kaydet, <strong>✕</strong> vazgeç, <strong>▲▼</strong> sırala, <strong>🗑️</strong> sil.
-        Değişiklikler otomatik kaydedilir ve PDF'e yansır.
-        <br><br>
-        <strong>🏠↔🏢 Not:</strong> Koşullarda <em>{MEKAN}</em> yer tutucusu kullanırsanız PDF oluşturulurken kullanım amacına göre otomatik olarak <em>"ev"</em> veya <em>"işyeri"</em> olarak değişir.
-        Mevcut koşullardaki <em>"ev"</em> ifadeleri bu dönüşümü otomatik uygular — düzenlemenize gerek yok.
-      </div>
-      <div class="kosul-list" id="kosulList"></div>
-    </div>
-  </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box">
-    <div class="modal-icon" id="modalIcon">⚠️</div>
-    <h3 id="modalTitle">Emin misiniz?</h3>
-    <p id="modalText">Bu işlem geri alınamaz.</p>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeModal()">İptal</button>
-      <button class="modal-confirm" id="modalConfirmBtn">Evet, Sil</button>
-    </div>
-  </div>
-</div>
 
 <script>
-const DRAFT_KEY    = 'kiraSozDraft';
-const ARCHIVE_KEY  = 'kiraSozArchive';
+const DRAFT_KEY = 'kiraSozDraft';
+const ARCHIVE_KEY = 'kiraSozArchive';
 const KOSULLAR_KEY = 'kiraSozKosullar';
 
 const FIELD_IDS = [
-  'cins','kullanim','mahallesi','dairesi','sokak','demirbas',
-  'veren_ad','veren_tc','banka','veren_tel',
-  'kiraci_ad','kiraci_tc','kiraci_tel',
-  'aylik_kira','pesinat','depozito','baslangic','muddet','odeme','kira_gunu',
-  'kefil_ad','kefil_tc'
+    'cins','kullanim','mahallesi','dairesi','sokak',
+    'veren_ad','veren_tc','banka',
+    'kiraci_ad','kiraci_tc',
+    'aylik_kira','depozito','baslangic','muddet'
 ];
 
 const KOSULLAR_DEFAULT = [
-  "Kiracı, kat mülkiyeti kanununa uymayı aynen kabul ve taahhüt eder.",
-  "Kiracı, {MEKAN}in çevresinde oturanlara iyi niyet kuralları içinde davranacaktır.",
-  "Kiracı, {MEKAN}i kısmen veya tamamen bir başkasına kiraya veremez, devir edemez.",
-  "Elektrik, su, doğalgaz, güvenlik, apartman veya siteye ait tüm aidatlar kiracıya aittir.",
-  "Kiracı apartman veya site yönetiminin alacağı kararlara aynen uymak zorundadır.",
-  "Kiracı, {MEKAN}de yapılması gereken tadilat ve ilaveleri mal sahibine bildirmek zorundadır.",
-  "Kiracı mal sahibine vermiş olduğu peşinat ve depozitoyu yapacağı tamirata mahsup edemez.",
-  "Kiralanan {MEKAN}in mülkiyet hakkından doğan vergiler ev sahibine aittir.",
-  "Kiracı, kira sözleşmesinin sonunda {MEKAN}i teslim aldığı şekilde mülk sahibine teslim etmek zorundadır.",
-  "Kiracı, kira sözleşmesinin sona ermesi veya satılığa sunulması halinde {MEKAN}in gezilmesine izin vermek zorundadır.",
-  "Kiracı, kiralanan yere yaptığı kalıcı ilaveler ve lüks görülen işlemlerin bedelini {MEKAN} sahibinden isteyemez, kiradan kesemez.",
-  "Kiralanan {MEKAN}in boşaltılması gerektiği hallerde, boşaltılmaması nedeniyle ortaya çıkacak zararlardan dolayı kiracı sorumludur.",
-  "Kiracı, mülk sahibinin yazılı imzalı olurunu almak ve giderleri kendisine ait olmak üzere kablolu televizyon gibi donanımları yaptırabilir.",
-  "Kiracı kiralanmış {MEKAN}i boşaltmak istediği takdirde en az 15 gün evvelinden mal sahibine bildirmeyi taahhüt eder.",
-  "İş bu kontrat 1 yıllıktır. Kontratın sona ermesinden 15 gün evvel taraflar yazılı veya sözlü olarak ihtarda bulunmadıkları sürece kontrat yenilenmiş kabul edilir.",
-  "Taraflarca kira sözleşmesinde yazılı adresler kanuni ikametgâh adresi olarak kabul edilir.",
-  "Yıllık zam oranı TÜFE/ÜFE oranında artırılmayı taraflar kabul ve taahhüt eder."
+    "Kiracı, kat mülkiyeti kanununa uymayı aynen kabul ve taahhüt eder.",
+    "Kiracı, {MEKAN}in çevresinde oturanlara iyi niyet kuralları içinde davranacaktır.",
+    "Kiracı, {MEKAN}i kısmen veya tamamen bir başkasına kiraya veremez, devir edemez.",
+    "Elektrik, su, doğalgaz, apartman veya siteye ait tüm aidatlar kiracıya aittir.",
+    "Kiracı apartman veya site yönetiminin alacağı kararlara aynen uymak zorundadır.",
+    "Kiracı, {MEKAN}de yapılması gereken tadilatları mal sahibine bildirmek zorundadır.",
+    "Kiracı mal sahibine vermiş olduğu depozitoyu yapacağı tamirata mahsup edemez.",
+    "Kiralanan {MEKAN}in mülkiyet hakkından doğan vergiler ev sahibine aittir.",
+    "Kiracı, kira sözleşmesinin sonunda {MEKAN}i teslim aldığı şekilde teslim etmek zorundadır.",
+    "Kiracı, satılığa sunulması halinde {MEKAN}in gezilmesine izin vermek zorundadır.",
+    "Kiracı, yaptığı kalıcı ilavelerin bedelini mülk sahibinden isteyemez.",
+    "Kiralanan {MEKAN}in boşaltılması gerektiği hallerde kiracı sorumludur.",
+    "Kiracı, mülk sahibinin yazılı olurunu almak şartıyla donanım ekleyebilir.",
+    "Kiracı {MEKAN}i boşaltmak istediği takdirde en az 15 gün önceden bildirmelidir.",
+    "İş bu kontrat 1 yıllıktır. İhtar yapılmadığı sürece yenilenmiş kabul edilir.",
+    "Sözleşmede yazılı adresler kanuni ikametgâh adresi olarak kabul edilir.",
+    "Yıllık zam oranı TÜFE/ÜFE oranında artırılacaktır."
 ];
 
-// ═══════════════════════════════════════════════════
-// MÜLK TİPİ TESPİTİ VE {MEKAN} DÖNÜŞÜMÜ
-// ═══════════════════════════════════════════════════
-
-/**
- * Kullanım amacı alanına göre mülkün tipi belirlenir.
- * "mesken", "konut", "ikametgah" gibi → "ev"
- * "ticari", "işyeri", "dükkan", "ofis", "mağaza", "depo", "fabrika" gibi → "işyeri"
- * Boş veya belirsiz → varsayılan "ev"
- */
+// MÜLK TİPİ
 function getMulkTipi() {
-  var kullanim = (document.getElementById('kullanim') ? document.getElementById('kullanim').value : '').toLowerCase().trim();
-  var cins = (document.getElementById('cins') ? document.getElementById('cins').value : '').toLowerCase().trim();
-
-  // İşyeri anahtar kelimeleri
-  var isyeriKelimeler = [
-    'ticari','işyeri','isyeri','dükkan','dukkan','ofis','mağaza','magaza',
-    'depo','fabrika','atölye','atolye','restoran','cafe','kafe','market',
-    'dükkân','dükkan','ticaret','iş yeri','büro','buro','plaza','showroom',
-    'muayenehane','klinik','eczane','banka','otel','pansiyon'
-  ];
-
-  // Mesken anahtar kelimeleri (bunlar varsa kesinlikle ev)
-  var meskenKelimeler = [
-    'mesken','konut','daire','ikametgah','ikametgâh','residence','yaşam','yasam','oturma'
-  ];
-
-  // Önce mesken kontrolü
-  for (var i = 0; i < meskenKelimeler.length; i++) {
-    if (kullanim.indexOf(meskenKelimeler[i]) !== -1) return 'ev';
-  }
-  // Sonra işyeri kontrolü
-  for (var j = 0; j < isyeriKelimeler.length; j++) {
-    if (kullanim.indexOf(isyeriKelimeler[j]) !== -1) return 'işyeri';
-  }
-  // Cins alanından da kontrol et
-  for (var k = 0; k < isyeriKelimeler.length; k++) {
-    if (cins.indexOf(isyeriKelimeler[k]) !== -1) return 'işyeri';
-  }
-
-  return 'ev'; // Varsayılan
-}
-
-/**
- * Koşul metnindeki {MEKAN} yer tutucularını ve eski "ev" geçişlerini
- * mülk tipine göre dönüştürür.
- */
-function applyMekanReplace(text, tip) {
-  if (!text) return text;
-
-  if (tip === 'işyeri') {
-    // {MEKAN} yer tutucularını işyerine göre çevir
-    text = text.replace(/\{MEKAN\}in/g, 'işyerinin');
-    text = text.replace(/\{MEKAN\}i\b/g, 'işyerini');
-    text = text.replace(/\{MEKAN\}de\b/g, 'işyerinde');
-    text = text.replace(/\{MEKAN\}\b/g, 'işyeri');
-
-    // Geriye dönük uyumluluk: eski "ev" ifadelerini de işyerine çevir
-    // Sadece tam kelime eşleşmelerini değiştir (ev sahibi, evde, evi, evin)
-    text = text.replace(/\bev sahibinden\b/gi, 'işyeri sahibinden');
-    text = text.replace(/\bev sahibine\b/gi, 'işyeri sahibine');
-    text = text.replace(/\bev sahibi\b/gi, 'işyeri sahibi');
-    text = text.replace(/\bevde\b/gi, 'işyerinde');
-    text = text.replace(/\bevin\b/gi, 'işyerinin');
-    text = text.replace(/\bevi\b/gi, 'işyerini');
-    text = text.replace(/\beve\b/gi, 'işyerine');
-    text = text.replace(/\bev\b/gi, 'işyeri');
-  } else {
-    // {MEKAN} yer tutucularını eve göre çevir
-    text = text.replace(/\{MEKAN\}in/g, 'evin');
-    text = text.replace(/\{MEKAN\}i\b/g, 'evi');
-    text = text.replace(/\{MEKAN\}de\b/g, 'evde');
-    text = text.replace(/\{MEKAN\}\b/g, 'ev');
-  }
-
-  return text;
-}
-
-function onKullanimChange() {
-  updateMulkTipiBar();
-  scheduleAutoSave();
+    const val = (document.getElementById('kullanim').value || '').toLowerCase();
+    const isyeriKelimeler = ['ticari','işyeri','isyeri','dükkan','dukkan','ofis','depo','buro','büro'];
+    for(let k of isyeriKelimeler) { if(val.includes(k)) return 'işyeri'; }
+    return 'ev';
 }
 
 function updateMulkTipiBar() {
-  var tip = getMulkTipi();
-  var bar = document.getElementById('mulkTipiBar');
-  var badge = document.getElementById('mulkTipiBadge');
-  var aciklama = document.getElementById('mulkTipiAciklama');
-
-  if (tip === 'işyeri') {
-    bar.className = 'mulk-tipi-bar isyeri';
-    badge.textContent = '🏢 İŞYERİ';
-    if (aciklama) aciklama.textContent = '— Koşullardaki "ev" ifadeleri "işyeri" olarak yazılacak';
-  } else {
-    bar.className = 'mulk-tipi-bar';
-    badge.textContent = '🏠 EV';
-    if (aciklama) aciklama.textContent = '— Koşullardaki mülk ifadesi "ev" olarak kalacak';
-  }
-}
-
-// ═══════════════════════════════════════════════════
-
-function g(id){
-  var el = document.getElementById(id);
-  if (!el) return '';
-  return (el.tagName === 'SELECT' ? el.value : el.value || '').trim();
-}
-function setField(id, val){
-  var el = document.getElementById(id);
-  if (!el) return;
-  el.value = val || '';
-}
-function escapeHTML(str){
-  str = str || '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-function nl2br(str){
-  str = str || '';
-  return escapeHTML(str).replace(/\n/g,'<br>');
-}
-function fmtDate(ds){
-  if(!ds) return '..........';
-  var p=ds.split('-');
-  return p.length===3 ? p[2]+'.'+p[1]+'.'+p[0] : '..........';
-}
-function fmtMoney(v){
-  if(v===''||v===null||v===undefined) return '..........';
-  var n=Number(v);
-  return isNaN(n) ? '..........' : n.toLocaleString('tr-TR')+' TL';
-}
-function nowStr(){
-  var d=new Date();
-  return d.toLocaleDateString('tr-TR')+' '+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
-}
-function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
-
-function toast(msg, type){
-  type = type || 'ok';
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.className='toast show '+type;
-  clearTimeout(t._timer);
-  t._timer=setTimeout(function(){ t.className='toast'; },3500);
-}
-function openModal(icon,title,text,cb){
-  document.getElementById('modalIcon').textContent=icon;
-  document.getElementById('modalTitle').textContent=title;
-  document.getElementById('modalText').textContent=text;
-  document.getElementById('modalConfirmBtn').onclick=function(){ closeModal(); cb&&cb(); };
-  document.getElementById('modalOverlay').classList.add('show');
-}
-function closeModal(){ document.getElementById('modalOverlay').classList.remove('show'); }
-
-function switchTab(tab){
-  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
-  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-  document.getElementById('tab-'+tab).classList.add('active');
-  document.getElementById('panel-'+tab).classList.add('active');
-  if(tab==='archive')  renderArchive();
-  if(tab==='kosullar') renderKosullar();
-}
-
-function readForm(){
-  var data={};
-  FIELD_IDS.forEach(function(id){ data[id]=g(id); });
-  return data;
-}
-function fillForm(data){
-  FIELD_IDS.forEach(function(id){ setField(id, data[id]); });
-}
-
-function validateForm(){
-  var zorunlu=[
-    ['kiraci_ad','Kiracı Adı Soyadı'],
-    ['veren_ad', 'Kiraya Veren Adı Soyadı'],
-    ['aylik_kira','Aylık Kira (TL)'],
-    ['baslangic', 'Başlangıç Tarihi']
-  ];
-  document.querySelectorAll('input.invalid,select.invalid').forEach(function(el){ el.classList.remove('invalid'); });
-  for(var i=0;i<zorunlu.length;i++){
-    var id=zorunlu[i][0], label=zorunlu[i][1];
-    if(!g(id)){
-      var el=document.getElementById(id);
-      if(el){ el.classList.add('invalid'); el.focus(); }
-      toast('⚠️ "'+label+'" alanı zorunludur.','err');
-      return false;
+    const tip = getMulkTipi();
+    const badge = document.getElementById('mulkTipiBadge');
+    const bar = document.getElementById('mulkTipiBar');
+    if(tip === 'işyeri') {
+        badge.textContent = '🏢 İŞYERİ';
+        bar.classList.add('isyeri');
+    } else {
+        badge.textContent = '🏠 EV';
+        bar.classList.remove('isyeri');
     }
-  }
-  return true;
 }
 
-var _autoTimer=null;
-function scheduleAutoSave(){
-  clearTimeout(_autoTimer);
-  _autoTimer=setTimeout(function(){
-    localStorage.setItem(DRAFT_KEY,JSON.stringify(readForm()));
-    document.getElementById('autosaveInfo').textContent='✔ Otomatik kaydedildi: '+nowStr();
-  },1500);
-}
-function saveDraft(){
-  localStorage.setItem(DRAFT_KEY,JSON.stringify(readForm()));
-  document.getElementById('autosaveInfo').textContent='✔ Manuel kaydedildi: '+nowStr();
-  toast('💾 Taslak kaydedildi.','ok');
-}
-function loadDraft(){
-  var raw=localStorage.getItem(DRAFT_KEY);
-  if(!raw) return;
-  try{ fillForm(JSON.parse(raw)); document.getElementById('autosaveInfo').textContent='✔ Taslak yüklendi'; }catch(e){}
-}
-function clearForm(){
-  FIELD_IDS.forEach(function(id){ setField(id,''); });
-  document.querySelectorAll('input.invalid,select.invalid').forEach(function(el){ el.classList.remove('invalid'); });
-  localStorage.removeItem(DRAFT_KEY);
-  document.getElementById('autosaveInfo').textContent='Taslak otomatik kaydedilir';
-  updateMulkTipiBar();
-  toast('🗑️ Form temizlendi.','info');
-}
-function confirmClearDraft(){
-  openModal('🗑️','Formu Temizle','Tüm alanlar silinecek ve taslak kaldırılacak. Emin misiniz?',clearForm);
+// YARDIMCI FONKSİYONLAR
+function toast(msg, type='ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3000);
 }
 
-function getArchive(){
-  try{ return JSON.parse(localStorage.getItem(ARCHIVE_KEY))||[]; }catch(e){ return []; }
-}
-function saveArchive(arr){
-  localStorage.setItem(ARCHIVE_KEY,JSON.stringify(arr)); updateBadge();
-}
-function updateBadge(){ document.getElementById('archiveBadge').textContent=getArchive().length; }
-
-function saveToArchive(silent){
-  silent = silent || false;
-  var data=readForm();
-  var entry={
-    id:uid(), savedAt:nowStr(),
-    kiraci_ad:data.kiraci_ad, veren_ad:data.veren_ad,
-    cins:data.cins, mahallesi:data.mahallesi,
-    dairesi:data.dairesi, sokak:data.sokak,
-    aylik_kira:data.aylik_kira, baslangic:data.baslangic,
-    muddet:data.muddet, fields:data
-  };
-  var arr=getArchive(); arr.unshift(entry);
-  saveArchive(arr);
-  if(!silent) toast('🗂️ Arşive kaydedildi!','ok');
-  renderArchive();
-}
-function deleteFromArchive(id){
-  openModal('🗑️','Kaydı Sil','Bu sözleşme arşivden kalıcı olarak silinecek.',function(){
-    saveArchive(getArchive().filter(function(e){ return e.id!==id; }));
-    renderArchive(); toast('🗑️ Kayıt silindi.','info');
-  });
-}
-function confirmClearAll(){
-  openModal('⚠️','Tümünü Sil','Arşivdeki tüm sözleşmeler silinecek. Bu işlem geri alınamaz!',function(){
-    localStorage.removeItem(ARCHIVE_KEY); updateBadge(); renderArchive(); toast('🗑️ Tüm arşiv silindi.','err');
-  });
-}
-function loadFromArchive(id){
-  var entry=getArchive().find(function(e){ return e.id===id; });
-  if(!entry) return;
-  fillForm(entry.fields); saveDraft(); switchTab('form');
-  updateMulkTipiBar();
-  toast('📂 Sözleşme forma yüklendi.','ok');
-}
-function exportArchive(){
-  var arr=getArchive();
-  if(!arr.length){ toast('⚠️ Arşiv boş.','err'); return; }
-  var blob=new Blob([JSON.stringify(arr,null,2)],{type:'application/json'});
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download='kira_arsiv_'+Date.now()+'.json'; a.click();
-  URL.revokeObjectURL(a.href); toast('📦 '+arr.length+' kayıt dışa aktarıldı.','ok');
-}
-function importArchive(input){
-  var file=input.files[0]; if(!file) return;
-  var reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      var arr=JSON.parse(e.target.result);
-      if(!Array.isArray(arr)) throw new Error('Geçersiz format');
-      var existing=getArchive(); var existIds=new Set(existing.map(function(x){ return x.id; }));
-      saveArchive([...arr.filter(function(x){ return !existIds.has(x.id); }),...existing]);
-      renderArchive(); toast('✅ '+arr.length+' kayıt içe aktarıldı.','ok');
-    }catch(err){ toast('❌ Geçersiz dosya: '+err.message,'err'); }
-  };
-  reader.readAsText(file); input.value='';
-}
-function renderArchive(){
-  var list=document.getElementById('archiveList'); if(!list) return;
-  var q=(document.getElementById('searchBox')?document.getElementById('searchBox').value:''||'').toLowerCase();
-  var sort=document.getElementById('sortSelect')?document.getElementById('sortSelect').value:'newest'||'newest';
-  var arr=getArchive();
-  if(q){ arr=arr.filter(function(e){
-    return (e.kiraci_ad||'').toLowerCase().indexOf(q)!==-1||(e.veren_ad||'').toLowerCase().indexOf(q)!==-1||
-    (e.cins||'').toLowerCase().indexOf(q)!==-1||(e.mahallesi||'').toLowerCase().indexOf(q)!==-1||
-    (e.dairesi||'').toLowerCase().indexOf(q)!==-1||(e.baslangic||'').indexOf(q)!==-1||(e.savedAt||'').indexOf(q)!==-1;
-  }); }
-  if(sort==='oldest') arr=arr.slice().reverse();
-  else if(sort==='name') arr=arr.slice().sort(function(a,b){ return (a.kiraci_ad||'').localeCompare(b.kiraci_ad||'','tr'); });
-  if(!arr.length){
-    list.innerHTML='<div class="archive-empty"><div class="icon-big">🗂️</div><div>'+(q?'Arama sonucu bulunamadı.':'Henüz kayıtlı sözleşme yok.<br>Formu doldurup <b>Arşive Kaydet</b>\'e tıklayın.')+'</div></div>';
-    return;
-  }
-  list.innerHTML=arr.map(function(e){
-    var kira=e.aylik_kira?fmtMoney(e.aylik_kira):'—';
-    var tarih=e.baslangic?fmtDate(e.baslangic):'—';
-    var adres=[e.mahallesi,e.sokak,e.dairesi].filter(Boolean).join(', ')||'—';
-    return '<div class="arc-item">'+
-      '<div class="arc-header">'+
-      '<div><div class="arc-name">🧑 '+escapeHTML(e.kiraci_ad||'İsimsiz Kiracı')+'</div>'+
-      '<div style="font-size:12px;color:#888;margin-top:2px">Mal Sahibi: '+escapeHTML(e.veren_ad||'—')+'</div></div>'+
-      '<div class="arc-date">🕐 '+escapeHTML(e.savedAt)+'</div></div>'+
-      '<div class="arc-meta">'+
-      '<span class="arc-tag">🏠 '+escapeHTML(e.cins||'—')+'</span>'+
-      '<span class="arc-tag">📍 '+escapeHTML(adres)+'</span>'+
-      '<span class="arc-tag gold">💰 '+escapeHTML(kira)+'</span>'+
-      '<span class="arc-tag">📅 '+escapeHTML(tarih)+'</span>'+
-      (e.muddet?'<span class="arc-tag">⏳ '+escapeHTML(e.muddet)+'</span>':'')+
-      '</div>'+
-      '<div class="arc-actions">'+
-      '<button class="btn-arc btn-arc-load" onclick="loadFromArchive(\''+e.id+'\')">📂 Forma Yükle</button>'+
-      '<button class="btn-arc btn-arc-pdf"  onclick="generatePdfFromEntry(\''+e.id+'\')">⬇ PDF Al</button>'+
-      '<button class="btn-arc btn-arc-del"  onclick="deleteFromArchive(\''+e.id+'\')">🗑️ Sil</button>'+
-      '</div></div>';
-  }).join('');
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    if(tab === 'archive') renderArchive();
+    if(tab === 'kosullar') renderKosullar();
 }
 
-function getKosullar(){
-  try{ var raw=localStorage.getItem(KOSULLAR_KEY); return raw?JSON.parse(raw):[...KOSULLAR_DEFAULT]; }
-  catch(e){ return [...KOSULLAR_DEFAULT]; }
-}
-function saveKosullar(arr){ localStorage.setItem(KOSULLAR_KEY,JSON.stringify(arr)); updateKosullarBadge(); }
-function updateKosullarBadge(){
-  var n=getKosullar().length;
-  var b=document.getElementById('kosullarBadge'); if(b) b.textContent=n;
-  var c=document.getElementById('kosulCount'); if(c) c.textContent=n;
-  var cp=document.getElementById('kosulCountPanel'); if(cp) cp.textContent=n;
+function clearForm() {
+    FIELD_IDS.forEach(id => document.getElementById(id).value = '');
+    localStorage.removeItem(DRAFT_KEY);
+    toast('Form temizlendi', 'err');
 }
 
-// Koşullar panelinde orijinal metni (yer tutucularla) göster
-function renderKosullar(){
-  var list=document.getElementById('kosulList'); if(!list) return;
-  var arr=getKosullar(); updateKosullarBadge();
-  if(!arr.length){
-    list.innerHTML='<div class="archive-empty" style="padding:28px 0"><div class="icon-big">📋</div><div>Hiç koşul yok. <b>Yeni Madde Ekle</b>\'ye tıklayın.</div></div>';
-    return;
-  }
-  list.innerHTML=arr.map(function(madde,i){
-    return '<div class="kosul-item'+(madde===''?' new-item':'')+'" id="ki-'+i+'">'+
-      '<div class="kosul-num">M'+(i+1)+'</div>'+
-      '<textarea class="kosul-text" id="kt-'+i+'" rows="2" '+(madde!==''?'readonly':'')+' oninput="autoResize(this)">'+escapeHTML(madde)+'</textarea>'+
-
-```
-  '<div class="kosul-btns">'+
-    '<button class="kosul-btn '+(madde===''?'kb-save':'kb-edit')+'" title="'+(madde===''?'Kaydet':'Düzenle')+'" onclick="toggleEditKosul('+i+')">'+(madde===''?'💾':'✏️')+'</button>'+
-    '<button class="kosul-btn kb-cancel" title="Vazgeç" onclick="cancelEditKosul('+i+')" style="display:'+(madde===''?'flex':'none')+'">✕</button>'+
-    '<button class="kosul-btn kb-up" title="Yukarı" onclick="moveKosul('+i+',-1)" '+(i===0?'disabled':'')+'>▲</button>'+
-    '<button class="kosul-btn kb-down" title="Aşağı" onclick="moveKosul('+i+',+1)" '+(i===arr.length-1?'disabled':'')+'>▼</button>'+
-    '<button class="kosul-btn kb-del" title="Sil" onclick="deleteKosul('+i+')">🗑️</button>'+
-  '</div></div>';
-```
-
-}).join(’’);
-var emptyIdx=arr.indexOf(’’);
-if(emptyIdx>-1){
-var ta=document.getElementById(‘kt-’+emptyIdx);
-if(ta){ setTimeout(function(){ ta.focus(); ta.scrollIntoView({behavior:‘smooth’,block:‘center’}); },80); }
-}
-}
-function autoResize(ta){ ta.style.height=‘auto’; ta.style.height=ta.scrollHeight+‘px’; }
-function toggleEditKosul(i){
-var item=document.getElementById(‘ki-’+i); var ta=document.getElementById(‘kt-’+i);
-if(!item||!ta) return;
-var editBtn=item.querySelector(’.kb-edit,.kb-save’); var cancelBtn=item.querySelector(’.kb-cancel’);
-if(ta.readOnly){
-ta._orig=ta.value; ta.readOnly=false; ta.focus(); autoResize(ta);
-editBtn.textContent=‘💾’; editBtn.className=‘kosul-btn kb-save’; editBtn.title=‘Kaydet’;
-if(cancelBtn) cancelBtn.style.display=‘flex’; item.classList.add(‘editing’);
-} else {
-var newText=ta.value.trim(); var arr=getKosullar();
-if(!newText){ arr.splice(i,1); saveKosullar(arr); renderKosullar(); toast(‘ℹ️ Boş madde kaldırıldı.’,‘info’); return; }
-arr[i]=newText; saveKosullar(arr); renderKosullar(); toast(‘✅ Madde güncellendi.’,‘ok’);
-}
-}
-function cancelEditKosul(i){
-var item=document.getElementById(‘ki-’+i); var ta=document.getElementById(‘kt-’+i);
-if(!item||!ta) return;
-if(ta._orig===undefined||ta._orig===’’){
-var arr=getKosullar(); arr.splice(i,1); saveKosullar(arr); renderKosullar(); return;
-}
-ta.value=ta._orig; ta.readOnly=true;
-var editBtn=item.querySelector(’.kb-save’); var cancelBtn=item.querySelector(’.kb-cancel’);
-if(editBtn){ editBtn.textContent=‘✏️’; editBtn.className=‘kosul-btn kb-edit’; editBtn.title=‘Düzenle’; }
-if(cancelBtn) cancelBtn.style.display=‘none’; item.classList.remove(‘editing’);
-}
-function moveKosul(i,dir){
-var arr=getKosullar(); var j=i+dir;
-if(j<0||j>=arr.length) return;
-var tmp=arr[i]; arr[i]=arr[j]; arr[j]=tmp;
-saveKosullar(arr); renderKosullar();
-setTimeout(function(){ var el=document.getElementById(‘ki-’+j); if(el) el.scrollIntoView({behavior:‘smooth’,block:‘nearest’}); },60);
-}
-function deleteKosul(i){
-openModal(‘🗑️’,‘Maddeyi Sil’,‘Bu madde sözleşmeden kalıcı olarak kaldırılacak.’,function(){
-var arr=getKosullar(); arr.splice(i,1); saveKosullar(arr); renderKosullar(); toast(‘🗑️ Madde silindi.’,‘info’);
-});
-}
-function addKosul(){
-var arr=getKosullar();
-if(arr.length>0&&arr[arr.length-1].trim()===’’){
-toast(‘⚠️ Önceki boş maddeyi önce doldurun veya iptal edin.’,‘err’);
-var el=document.getElementById(‘kt-’+(arr.length-1)); if(el) el.focus(); return;
-}
-arr.push(’’); saveKosullar(arr); renderKosullar();
-}
-function resetKosullar(){
-openModal(‘🔄’,‘Varsayılana Sıfırla’,‘Tüm özel değişiklikler silinecek ve 17 maddelik orijinal liste geri yüklenecek.’,function(){
-localStorage.removeItem(KOSULLAR_KEY); renderKosullar(); toast(‘🔄 Koşullar orijinal haline döndürüldü.’,‘info’);
-});
+// VERİ İŞLEMLERİ
+function readForm() {
+    let data = {};
+    FIELD_IDS.forEach(id => data[id] = document.getElementById(id).value);
+    return data;
 }
 
-function setBusy(btnId, spinnerId, iconId, textId, busy, label){
-var btn=document.getElementById(btnId); if(!btn) return;
-btn.disabled=busy;
-document.getElementById(spinnerId).style.display=busy?‘block’:‘none’;
-document.getElementById(iconId).style.display=busy?‘none’:‘inline’;
-document.getElementById(textId).textContent=busy?‘Oluşturuluyor…’:label;
+function saveToArchive(silent = false) {
+    const data = readForm();
+    if(!data.kiraci_ad) { toast('Lütfen en azından kiracı adını girin', 'err'); return; }
+    let archive = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]');
+    archive.unshift({ id: Date.now(), date: new Date().toLocaleString(), fields: data });
+    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(archive));
+    updateBadge();
+    if(!silent) toast('Arşive kaydedildi');
 }
 
-function buildData(raw){
-var aylik=raw.aylik_kira;
-return {
-dairesi:   raw.dairesi   ||’……….’, mahallesi:raw.mahallesi  ||’……….’,
-sokak:     raw.sokak     ||’……….’, cins:     raw.cins       ||’……….’,
-kullanim:  raw.kullanim  ||’……….’, demirbas: raw.demirbas   ||’……….’,
-veren_ad:  raw.veren_ad  ||’……….’, veren_tc: raw.veren_tc   ||’……….’,
-banka:     raw.banka     ||’……….’, veren_tel:raw.veren_tel  ||’……….’,
-kiraci_ad: raw.kiraci_ad ||’……….’, kiraci_tc:raw.kiraci_tc  ||’……….’,
-kiraci_tel:raw.kiraci_tel||’……….’,
-aylik_kira:aylik?fmtMoney(aylik):’………..’,
-yillik_kira:aylik?fmtMoney(Number(aylik)*12):’………..’,
-pesinat:   raw.pesinat  ?fmtMoney(raw.pesinat) :’………..’,
-depozito:  raw.depozito ?fmtMoney(raw.depozito):’………..’,
-muddet:    raw.muddet   ||’……….’, baslangic:fmtDate(raw.baslangic),
-odeme:     raw.odeme    ||’……….’, kira_gunu:raw.kira_gunu||’……….’,
-kefil_ad:  raw.kefil_ad ||’……….’, kefil_tc:raw.kefil_tc||’……….’,
-// Mülk tipi bilgisini de taşı
-mulk_tipi: raw.kullanim || ‘’
-};
+function updateBadge() {
+    const arc = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]');
+    document.getElementById('archiveBadge').textContent = arc.length;
 }
 
-/**
-
-- Kullanım amacı metnine göre mülk tipi belirle (arşivden gelen veri için)
-  */
-  function getMulkTipiFromKullanim(kullanim) {
-  kullanim = (kullanim || ‘’).toLowerCase().trim();
-  var isyeriKelimeler = [
-  ‘ticari’,‘işyeri’,‘isyeri’,‘dükkan’,‘dukkan’,‘ofis’,‘mağaza’,‘magaza’,
-  ‘depo’,‘fabrika’,‘atölye’,‘atolye’,‘restoran’,‘cafe’,‘kafe’,‘market’,
-  ‘dükkân’,‘dükkan’,‘ticaret’,‘iş yeri’,‘büro’,‘buro’,‘plaza’,‘showroom’,
-  ‘muayenehane’,‘klinik’,‘eczane’,‘banka’,‘otel’,‘pansiyon’
-  ];
-  var meskenKelimeler = [
-  ‘mesken’,‘konut’,‘daire’,‘ikametgah’,‘ikametgâh’,‘residence’,‘yaşam’,‘yasam’,‘oturma’
-  ];
-  for (var i=0; i<meskenKelimeler.length; i++) {
-  if (kullanim.indexOf(meskenKelimeler[i])!==-1) return ‘ev’;
-  }
-  for (var j=0; j<isyeriKelimeler.length; j++) {
-  if (kullanim.indexOf(isyeriKelimeler[j])!==-1) return ‘işyeri’;
-  }
-  return ‘ev’;
-  }
-
-function buildHTML(d){
-// Mülk tipini belirle
-var tip = getMulkTipiFromKullanim(d.mulk_tipi || d.kullanim || ‘’);
-
-var sonMaddeler=[];
-sonMaddeler.push(‘Kiracı peşinat olarak mal sahibine <strong>’+escapeHTML(d.pesinat)+’</strong> vermiştir.’);
-sonMaddeler.push(‘Kiracı depozito olarak mal sahibine <strong>’+escapeHTML(d.depozito)+’</strong> vermiştir. Depozito son ayın kirasına sayılmaz.’);
-sonMaddeler.push(‘İhtilaf halinde Türkiye Cumhuriyeti mahkemeleri ve icra daireleri yetkilidir.’);
-
-// Koşulları mülk tipine göre dönüştür
-var kosullarHam = getKosullar();
-var tumMaddeler = kosullarHam.concat(sonMaddeler);
-
-var kosullarHTML = tumMaddeler.map(function(m, i){
-var metin = applyMekanReplace(m, tip);
-return ‘<p class="madde">’+(i+1)+’- ‘+metin+’</p>’;
-}).join(’’);
-
-var kiraGunuRow = d.kira_gunu && d.kira_gunu !== ‘……….’
-? ‘<tr><td>Kira Ödeme Günü</td><td><strong>’+escapeHTML(d.kira_gunu)+’</strong></td></tr>’
-: ‘’;
-
-var kefilVar=d.kefil_ad!==’……….’||d.kefil_tc!==’……….’;
-
-// PDF başlığında mülk tipi göster
-var tipEtiketi = tip === ‘işyeri’
-? ‘<span style="background:#e65100;color:#fff;padding:2px 10px;border-radius:4px;font-size:9pt;margin-left:8px;vertical-align:middle;">İŞYERİ</span>’
-: ‘<span style="background:#1a1a2e;color:#c9a84c;padding:2px 10px;border-radius:4px;font-size:9pt;margin-left:8px;vertical-align:middle;">MESKEN</span>’;
-
-return ‘<!DOCTYPE html>\n<html lang="tr"><head><meta charset="UTF-8"><title>Kira Sözleşmesi</title>\n<style>\n@page{size:A4;margin:14mm 12mm;}\n*{margin:0;padding:0;box-sizing:border-box;}\nbody{font-family:Arial,Helvetica,sans-serif;font-size:11pt;color:#111;background:#fff;}\n.header-block{background:#d9d9d9;color:#000;text-align:center;padding:16px 10px 12px;border-bottom:3px solid #bfbfbf;margin-bottom:10px;}\n.header-block h1{font-size:19pt;letter-spacing:2px;}\n.header-block p{font-size:9pt;color:#333;margin-top:4px;}\n.section{margin-bottom:8px;}\n.sec-head{background:#f5f0e8;font-size:9pt;font-weight:bold;letter-spacing:1.2px;text-transform:uppercase;color:#c9a84c;padding:6px 8px;border-left:3px solid #c9a84c;margin-bottom:5px;}\ntable.info{width:100%;border-collapse:collapse;}\ntable.info td{padding:5px 8px;font-size:10.5pt;border-bottom:1px solid #ede8db;vertical-align:top;}\ntable.info td:first-child{width:40%;font-weight:bold;color:#555;font-size:9.5pt;}\ntable.info tr.highlight-row td{background:#fffbef;}\ntable.info tr.highlight-row td:last-child{color:#8b4a00;font-weight:bold;font-size:11pt;}\n.page-break{page-break-before:always;break-before:page;}\n.madde{font-size:9.5pt;line-height:1.5;padding:4px 0;color:#222;border-bottom:1px dotted #e0d8cc;}\n.nusha{font-size:8.5pt;font-style:italic;color:#666;margin-top:8px;text-align:center;}\n.sig-table{width:100%;border-collapse:collapse;margin-top:12px;}\n.sig-table td{width:33.3%;text-align:center;padding:12px 8px;vertical-align:top;border:1px solid #d4c9b0;background:#faf8f3;}\n.sig-title{font-weight:bold;font-size:9.5pt;color:#1a1a2e;margin-bottom:4px;}\n.sig-info{font-size:8.5pt;color:#555;margin-bottom:2px;word-break:break-word;}\n.sig-line{border-top:1px solid #888;margin-top:26px;padding-top:5px;font-size:7.5pt;color:#999;}\n.sig-date{font-size:8pt;color:#333;margin-top:4px;}\n.vergi{background:#fff8e8;border:1px solid #e8d5a3;border-radius:4px;padding:8px 10px;margin-top:12px;font-size:8.5pt;color:#5a4a2a;line-height:1.5;}\n.vergi strong{color:#8b3a2a;}\n@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}\n</style></head><body>\n<div class="header-block"><h1>KİRA SÖZLEŞMESİ ‘+tipEtiketi+’</h1><p>Resmi Kira Sözleşmesi Belgesi</p></div>\n<div class="section"><div class="sec-head">Kiralanan Mülk Bilgileri</div>\n<table class="info">\n<tr><td>Kiralananın Cinsi</td><td>’+escapeHTML(d.cins)+’</td></tr>\n<tr><td>Kullanım Amacı</td><td>’+escapeHTML(d.kullanim)+’</td></tr>\n<tr><td>Mahallesi</td><td>’+escapeHTML(d.mahallesi)+’</td></tr>\n<tr><td>Sokağı ve Numarası</td><td>’+escapeHTML(d.sokak)+’</td></tr>\n<tr><td>İlçe / İl</td><td>’+escapeHTML(d.dairesi)+’</td></tr>\n<tr><td>Demirbaş Listesi</td><td>’+nl2br(d.demirbas)+’</td></tr>\n</table></div>\n<div class="section"><div class="sec-head">Kiraya Veren (Mal Sahibi)</div>\n<table class="info">\n<tr><td>Adı Soyadı</td><td>’+escapeHTML(d.veren_ad)+’</td></tr>\n<tr><td>T.C. Kimlik No</td><td>’+escapeHTML(d.veren_tc)+’</td></tr>\n<tr><td>Banka Hesap No (IBAN)</td><td>’+escapeHTML(d.banka)+’</td></tr>\n<tr><td>Cep Telefonu</td><td>’+escapeHTML(d.veren_tel)+’</td></tr>\n</table></div>\n<div class="section"><div class="sec-head">Kiracı Bilgileri</div>\n<table class="info">\n<tr><td>Adı Soyadı</td><td>’+escapeHTML(d.kiraci_ad)+’</td></tr>\n<tr><td>T.C. Kimlik No</td><td>’+escapeHTML(d.kiraci_tc)+’</td></tr>\n<tr><td>Telefon</td><td>’+escapeHTML(d.kiraci_tel)+’</td></tr>\n</table></div>\n<div class="section"><div class="sec-head">Kira Koşulları</div>\n<table class="info">\n<tr><td>Bir Aylık Kira</td><td>’+escapeHTML(d.aylik_kira)+’</td></tr>\n<tr><td>Bir Senelik Kira</td><td>’+escapeHTML(d.yillik_kira)+’</td></tr>\n<tr><td>Kira Müddeti</td><td>’+escapeHTML(d.muddet)+’</td></tr>\n<tr><td>Başlangıç Tarihi</td><td>’+escapeHTML(d.baslangic)+’</td></tr>\n<tr><td>Ödeme Şekli</td><td>’+escapeHTML(d.odeme)+’</td></tr>\n’+kiraGunuRow+’\n</table></div>\n<div class="vergi">\n  <strong>Gelir Vergisi Kanununa Göre:</strong>\n  Tüccar, serbest meslek erbabı ve çiftçiler; ticari, mesleki ve zirai işleri ile ilgili olarak\n  yaptıkları kira ödemelerinden kanunda belirtilen oranlarda stopaj tevkifatı yaparak vergi dairesine yatırırlar.\n</div>\n<div class="section page-break"><div class="sec-head">Genel Koşullar</div>\n’+kosullarHTML+’\n<p class="nusha">İş bu kontrat maddelerden ibaret olup 2 nüsha düzenlenip muhatapların her birine verilmiştir.</p>\n</div>\n<table class="sig-table"><tr>\n<td>\n  <div class="sig-title">KEFİL</div>\n  <div class="sig-info">’+(kefilVar?escapeHTML(d.kefil_ad):‘Yok’)+’</div>\n  <div class="sig-info">’+(kefilVar?‘TC: ‘+escapeHTML(d.kefil_tc):’’)+’</div>\n  <div class="sig-line">İmza</div>\n</td>\n<td>\n  <div class="sig-title">KİRACI</div>\n  <div class="sig-info" style="font-size:11.5pt;font-weight:bold;color:#1a1a2e;">’+escapeHTML(d.kiraci_ad)+’</div>\n  <div class="sig-line">İmza</div>\n</td>\n<td>\n  <div class="sig-title">KİRAYA VEREN</div>\n  <div class="sig-info" style="font-size:11.5pt;font-weight:bold;color:#1a1a2e;">’+escapeHTML(d.veren_ad)+’</div>\n  <div class="sig-line">İmza</div>\n</td>\n</tr></table>\n</body></html>’;
+function renderArchive() {
+    const list = document.getElementById('archiveList');
+    const arc = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]');
+    if(arc.length === 0) { list.innerHTML = '<p style="text-align:center; padding:20px;">Arşiv boş.</p>'; return; }
+    list.innerHTML = arc.map(item => `
+        <div class="arc-item">
+            <strong>${item.fields.kiraci_ad || 'İsimsiz'}</strong> - ${item.fields.aylik_kira || 0} TL
+            <br><small>${item.date}</small>
+            <div style="margin-top:10px;">
+                <button onclick="loadArchive(${item.id})" style="padding:4px 8px; cursor:pointer;">📂 Yükle</button>
+                <button onclick="deleteArchive(${item.id})" style="padding:4px 8px; cursor:pointer; color:red;">🗑️ Sil</button>
+            </div>
+        </div>
+    `).join('');
 }
 
-function openPrintWindow(htmlStr){
-var win=window.open(’’,’_blank’);
-if(!win){ toast(‘❌ Pop-up engellendi. Tarayıcıdan izin verin.’,‘err’); return null; }
-win.document.open(); win.document.write(htmlStr); win.document.close();
-win.onload=function(){ setTimeout(function(){ win.focus(); win.print(); },500); };
-return win;
-}
-function generate(){
-if(!validateForm()) return;
-setBusy(‘genBtn’,‘spinner’,‘btnIcon’,‘btnText’,true,‘PDF Oluştur’);
-try{
-var d=buildData(readForm());
-var win=openPrintWindow(buildHTML(d));
-if(win) toast(‘✅ PDF penceresi açıldı.’,‘ok’);
-}catch(e){ toast(’❌ Hata: ’+e.message,‘err’); }
-setBusy(‘genBtn’,‘spinner’,‘btnIcon’,‘btnText’,false,‘PDF Oluştur’);
-}
-function generateAndSave(){
-if(!validateForm()) return;
-setBusy(‘genSaveBtn’,‘spinner2’,‘genSaveIcon’,‘genSaveText’,true,‘PDF Oluştur + Arşive Kaydet’);
-try{
-var d=buildData(readForm());
-var win=openPrintWindow(buildHTML(d));
-if(win){ saveToArchive(true); toast(‘✅ PDF açıldı ve arşive kaydedildi!’,‘ok’); }
-}catch(e){ toast(’❌ Hata: ’+e.message,‘err’); }
-setBusy(‘genSaveBtn’,‘spinner2’,‘genSaveIcon’,‘genSaveText’,false,‘PDF Oluştur + Arşive Kaydet’);
-}
-function generatePdfFromEntry(id){
-var entry=getArchive().find(function(e){ return e.id===id; }); if(!entry) return;
-var win=openPrintWindow(buildHTML(buildData(entry.fields)));
-if(win) toast(‘✅ PDF penceresi açıldı.’,‘ok’);
+function loadArchive(id) {
+    const arc = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]');
+    const item = arc.find(x => x.id === id);
+    if(item) {
+        FIELD_IDS.forEach(f => document.getElementById(f).value = item.fields[f] || '');
+        switchTab('form');
+        toast('Veriler yüklendi');
+    }
 }
 
-function gunLabel(n){
-var ekler={1:‘inci’,2:‘nci’,3:‘üncü’,4:‘üncü’,5:‘inci’,6:‘ncı’,7:‘nci’,8:‘inci’,9:‘uncu’,10:‘uncu’,
-11:‘inci’,12:‘nci’,13:‘üncü’,14:‘üncü’,15:‘inci’,16:‘ncı’,17:‘nci’,18:‘inci’,19:‘uncu’,20:‘nci’,
-21:‘inci’,22:‘nci’,23:‘üncü’,24:‘üncü’,25:‘inci’,26:‘ncı’,27:‘nci’,28:‘inci’,29:‘uncu’,30:‘uncu’,31:‘inci’};
-return n+”’”+ekler[n];
+function deleteArchive(id) {
+    let arc = JSON.parse(localStorage.getItem(ARCHIVE_KEY) || '[]');
+    arc = arc.filter(x => x.id !== id);
+    localStorage.setItem(ARCHIVE_KEY, JSON.stringify(arc));
+    renderArchive();
+    updateBadge();
 }
 
-function dolduruGunSelect(){
-[‘kira_gunu_bas’,‘kira_gunu_bit’].forEach(function(id){
-var sel=document.getElementById(id); if(!sel) return;
-var prev=sel.value;
-sel.innerHTML=’<option value="">— Gün —</option>’;
-for(var i=1;i<=31;i++){
-var opt=document.createElement(‘option’);
-opt.value=i; opt.textContent=i+’. gün’;
-sel.appendChild(opt);
-}
-if(prev) sel.value=prev;
-});
+// KOŞULLAR
+function getKosullar() {
+    return JSON.parse(localStorage.getItem(KOSULLAR_KEY) || JSON.stringify(KOSULLAR_DEFAULT));
 }
 
-function updateKiraGunu(){
-var bas=document.getElementById(‘kira_gunu_bas’)?document.getElementById(‘kira_gunu_bas’).value:’’;
-var bit=document.getElementById(‘kira_gunu_bit’)?document.getElementById(‘kira_gunu_bit’).value:’’;
-var hidden=document.getElementById(‘kira_gunu’);
-var preview=document.getElementById(‘kira_gunu_preview’);
-if(!bas && !bit){
-if(hidden) hidden.value=’’;
-if(preview){ preview.style.display=‘none’; preview.textContent=’’; }
-return;
-}
-var metin=’’;
-if(bas && bit){
-var b=parseInt(bas), e=parseInt(bit);
-if(b===e){
-metin=‘Her ayın ‘+gunLabel(b)+’ günü’;
-} else if(b<e){
-metin=‘Her ayın ‘+gunLabel(b)+’ ile ‘+gunLabel(e)+’ günleri arasında’;
-} else {
-if(preview){
-preview.style.display=‘block’; preview.style.color=’#8b3a2a’;
-preview.style.background=’#fde8e8’; preview.style.borderColor=’#e0b0b0’;
-preview.textContent=‘Bitiş günü başlangıç gününden küçük olamaz.’;
-}
-if(hidden) hidden.value=’’;
-return;
-}
-} else if(bas){
-metin=‘Her ayın ‘+gunLabel(parseInt(bas))+’ gününden itibaren’;
-} else {
-metin=‘Her ayın ‘+gunLabel(parseInt(bit))+’ gününe kadar’;
-}
-if(hidden) hidden.value=metin;
-if(preview){
-preview.style.display=‘block’; preview.style.color=’#8b6a1a’;
-preview.style.background=’#fef3d0’; preview.style.borderColor=’#e8c96a’;
-preview.textContent=’PDF'te görünecek: ’+metin;
-}
-scheduleAutoSave();
+function renderKosullar() {
+    const list = document.getElementById('kosulList');
+    const kosullar = getKosullar();
+    list.innerHTML = kosullar.map((k, i) => `
+        <div class="kosul-item">
+            <span>${i+1}</span>
+            <textarea class="kosul-text" onchange="updateKosul(${i}, this.value)">${k}</textarea>
+        </div>
+    `).join('');
 }
 
-function restoreKiraGunuSelects(val){
-if(!val) return;
-var m=val.match(/ayın (\d+)[’’’][\w\u00fc\u0131\u00f6\u00e7\u015f]+\s+ile\s+(\d+)/i);
-if(m){
-var bas=document.getElementById(‘kira_gunu_bas’);
-var bit=document.getElementById(‘kira_gunu_bit’);
-if(bas) bas.value=m[1];
-if(bit) bit.value=m[2];
-updateKiraGunu(); return;
-}
-var m2=val.match(/ayın (\d+)/i);
-if(m2){
-var bas2=document.getElementById(‘kira_gunu_bas’);
-var bit2=document.getElementById(‘kira_gunu_bit’);
-if(bas2) bas2.value=m2[1];
-if(bit2) bit2.value=m2[1];
-updateKiraGunu();
-}
+function updateKosul(index, val) {
+    let kosullar = getKosullar();
+    kosullar[index] = val;
+    localStorage.setItem(KOSULLAR_KEY, JSON.stringify(kosullar));
 }
 
-document.addEventListener(‘DOMContentLoaded’,function(){
-dolduruGunSelect();
-loadDraft();
-var hidden=document.getElementById(‘kira_gunu’);
-if(hidden && hidden.value) restoreKiraGunuSelects(hidden.value);
-updateBadge(); updateKosullarBadge(); renderArchive();
-updateMulkTipiBar(); // Mülk tipi göstergesini başlat
+function resetKosullar() {
+    localStorage.removeItem(KOSULLAR_KEY);
+    renderKosullar();
+    toast('Koşullar sıfırlandı');
+}
 
-FIELD_IDS.forEach(function(id){
-var el=document.getElementById(id); if(!el) return;
-el.addEventListener(‘input’, scheduleAutoSave);
-if(el.tagName===‘SELECT’) el.addEventListener(‘change’, scheduleAutoSave);
-if(el.tagName===‘INPUT’||el.tagName===‘TEXTAREA’) el.addEventListener(‘input’,function(){ el.classList.remove(‘invalid’); });
-});
+// PDF OLUŞTURMA
+function generate() {
+    const d = readForm();
+    if(!d.veren_ad || !d.kiraci_ad || !d.aylik_kira) {
+        toast('Lütfen zorunlu alanları doldurun!', 'err');
+        return;
+    }
+
+    const tip = getMulkTipi();
+    const kosullar = getKosullar().map((k, i) => {
+        let text = k.replace(/{MEKAN}/g, tip === 'işyeri' ? 'işyeri' : 'ev');
+        return `<p style="font-size:10pt; margin-bottom:5px;">${i+1}. ${text}</p>`;
+    }).join('');
+
+    const html = `
+        <html><head><title>Kira Sözleşmesi</title>
+        <style>
+            body { font-family: sans-serif; padding: 20px; color: #111; }
+            h1 { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            td { padding: 8px; border: 1px solid #ccc; }
+            .label { font-weight: bold; width: 30%; background: #f9f9f9; }
+            .sig-area { display: flex; justify-content: space-around; margin-top: 50px; text-align: center; }
+            .sig-box { border-top: 1px solid #000; width: 200px; padding-top: 10px; }
+        </style>
+        </head><body>
+            <h1>KİRA SÖZLEŞMESİ (${tip.toUpperCase()})</h1>
+            <table>
+                <tr><td class="label">Kiraya Veren</td><td>${d.veren_ad}</td></tr>
+                <tr><td class="label">Kiracı</td><td>${d.kiraci_ad}</td></tr>
+                <tr><td class="label">Cins / Adres</td><td>${d.cins} - ${d.mahallesi} ${d.sokak} ${d.dairesi}</td></tr>
+                <tr><td class="label">Başlangıç / Süre</td><td>${d.baslangic} / ${d.muddet}</td></tr>
+                <tr><td class="label">Aylık Kira</td><td>${d.aylik_kira} TL</td></tr>
+                <tr><td class="label">IBAN</td><td>${d.banka}</td></tr>
+            </table>
+            <h3 style="margin-top:30px;">GENEL KOŞULLAR</h3>
+            ${kosullar}
+            <div class="sig-area">
+                <div class="sig-box">KİRAYA VEREN<br><br>${d.veren_ad}</div>
+                <div class="sig-box">KİRACI<br><br>${d.kiraci_ad}</div>
+            </div>
+        </body></html>
+    `;
+
+    const win = window.open('', '_blank');
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 500);
+}
+
+function generateAndSave() {
+    saveToArchive(true);
+    generate();
+}
+
+// Olay Dinleyicileri
+document.addEventListener('DOMContentLoaded', () => {
+    updateBadge();
+    const draft = localStorage.getItem(DRAFT_KEY);
+    if(draft) {
+        const data = JSON.parse(draft);
+        FIELD_IDS.forEach(id => { if(data[id]) document.getElementById(id).value = data[id]; });
+    }
+
+    FIELD_IDS.forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+            localStorage.setItem(DRAFT_KEY, JSON.stringify(readForm()));
+        });
+    });
 });
 </script>
 
